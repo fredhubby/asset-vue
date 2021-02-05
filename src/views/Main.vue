@@ -1,5 +1,4 @@
 <template>
-<div class="mainBox">
 <!--  <h1>这是主页面</h1>-->
 <!--  <span id="usrname">欢迎您：{{ $store.getters.getUser.name }}</span><br/>-->
 <!--  <span id="logintime">登录于：{{ logintime }}</span>-->
@@ -7,15 +6,29 @@
     <el-header class="el-header" style="height: 80px">
       <el-row>
         <el-col :span="12"><div class="titleName">债权清收管理系统</div></el-col>
-        <el-col :span="12"><div class="loginName">欢迎您：{{ $store.getters.getUser.name }} {{ nowDateTime }}</div></el-col>
+        <el-col :span="12">
+          <div class="loginName">
+            <span>
+              欢迎您：{{ username }} {{ nowDateTime }}
+            </span>
+            <el-dropdown>
+              <i class="el-icon-s-tools" style="margin-right: 15px"></i>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>个人信息</el-dropdown-item>
+                <el-dropdown-item>用户管理</el-dropdown-item>
+                <el-dropdown-item>退出账户</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
+        </el-col>
       </el-row>
     </el-header>
     <el-container>
       <el-aside width="240px">
         <el-menu >
-          <el-submenu index="1">
-            <template slot="title"><i class="el-icon-s-home"></i>首页</template>
-          </el-submenu>
+          <el-menu-item index="1">
+            <span slot="title"><i class="el-icon-s-home"></i>首页</span>
+          </el-menu-item>
           <el-submenu index="2">
             <template slot="title"><i class="el-icon-menu"></i>债权信息</template>
             <el-menu-item-group>
@@ -25,7 +38,7 @@
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="3">
-            <template slot="title"><i class="el-icon-menu"></i>债权清收</template>
+            <template slot="title"><i class="el-icon-finished"></i>债权清收</template>
             <el-menu-item-group>
               <!--              <template slot="title">分组一</template>-->
               <el-menu-item index="3-1">债权清收明细</el-menu-item>
@@ -33,7 +46,7 @@
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="4">
-            <template slot="title"><i class="el-icon-menu"></i>司法诉讼</template>
+            <template slot="title"><i class="el-icon-s-grid"></i>司法诉讼</template>
             <el-menu-item-group>
               <!--              <template slot="title">分组一</template>-->
               <el-menu-item index="4-1">司法明细</el-menu-item>
@@ -41,7 +54,7 @@
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="5">
-            <template slot="title"><i class="el-icon-menu"></i>个人信息</template>
+            <template slot="title"><i class="el-icon-user-solid"></i>个人信息</template>
             <el-menu-item-group>
               <!--              <template slot="title">分组一</template>-->
               <el-menu-item index="5-1">用户资料</el-menu-item>
@@ -49,7 +62,7 @@
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="6">
-            <template slot="title"><i class="el-icon-menu"></i>查询统计</template>
+            <template slot="title"><i class="el-icon-search"></i>查询统计</template>
             <el-menu-item-group>
               <!--              <template slot="title">分组一</template>-->
               <el-menu-item index="6-1">催收公告管理</el-menu-item>
@@ -61,13 +74,59 @@
           </el-submenu>
         </el-menu>
       </el-aside>
+
       <el-container>
-        <el-main>main</el-main>
+        <el-main>
+          <div v-if="this.$route.path === '/Main'">
+            <span class="el-main-span1">今日，</span><br/>
+            <span class="el-main-span2">{{todayDateTime}}，欢迎使用债权清收管理系统</span>
+            <el-row :gutter="20" class="el-row2">
+              <el-col :span="16">
+                <el-card class="boxcard1" shadow="hover">
+                  <div slot="header" class="clearfix">
+                    <span style="font-family: 宋体; font-weight: bold"><i class="el-icon-message-solid"></i>时限提醒通知</span>
+                  </div>
+                  <div  class="text item">
+                    <el-table
+                        :data="tableData"
+                        style="width: 100%"
+                        :row-class-name="tableRowClassName">
+                      <el-table-column
+                          prop="content"
+                          label="通知内容"
+                          width="600">
+                      </el-table-column>
+                      <el-table-column
+                          prop="time"
+                          label="时间"
+                          width="300">
+                      </el-table-column>
+                      <el-table-column
+                          prop="status"
+                          label="状态">
+                      </el-table-column>
+                    </el-table>
+                  </div>
+                </el-card>
+              </el-col>
+              <el-col :span="8">
+                <el-card class="boxcard2" shadow="hover">
+                  <div slot="header" class="clearfix">
+                    <span style="font-family: 宋体; font-weight: bold"><i class="el-icon-s-claim"></i>使用记录</span>
+                  </div>
+                  <div v-for="o in 4" :key="o" style="padding-top: 10px">
+                    {{'列表内容 ' + o }}
+                  </div>
+                </el-card>
+              </el-col>
+            </el-row>
+          </div>
+          <router-view v-else/>
+        </el-main>
         <el-footer>Copyright © 江苏丹阳投资集团有限公司 版权所有</el-footer>
       </el-container>
     </el-container>
   </el-container>
-</div>
 </template>
 
 <script>
@@ -75,7 +134,26 @@ export default {
   name: "Main",
   data () {
     return{
+      username:'wanyu',
       nowDateTime: '',
+      todayDateTime:'',
+      tableData: [{
+        content: 'xxx债权申请执行日为xxxxx',
+        time: '2021-01-01',
+        status: '未处理'
+      }, {
+        content: 'xxx债权申请执行日为xxxxx',
+        time: '2021-01-01',
+        status: '未处理'
+      }, {
+        content: 'xxx债权申请执行日为xxxxx',
+        time: '2021-01-01',
+        status: '已处理'
+      }, {
+        content: 'xxx债权申请执行日为xxxxx',
+        time: '2021-01-01',
+        status: '急需处理'
+      }]
     }
   },
 
@@ -92,11 +170,30 @@ export default {
     },
     currentTime(){
       setInterval(this.getTime,500)
+    },
+    getDate(){
+      var that = this;
+      let yy = new Date().getFullYear();
+      let mm = new Date().getMonth()+1;
+      let dd = new Date().getDate();
+      that.todayDateTime = yy+'年'+mm+'月'+dd+'日';
+    },
+
+    tableRowClassName({row, rowIndex}) {
+      if (rowIndex === 1) {
+        return 'warning-row';
+      } else if (rowIndex === 2) {
+        return 'success-row';
+      } else if (rowIndex === 3) {
+        return 'danger-row';
+      }
+      return '';
     }
   },
 
   created() {
     this.currentTime();
+    this.getDate()
   }
 }
 </script>
@@ -123,7 +220,7 @@ export default {
   }
   .loginName{
     text-align: end;
-    color: black;
+    color: white;
     font-family: 隶书;
     font-size: 20px;
     font-weight: bold;
@@ -131,7 +228,7 @@ export default {
   }
   .el-footer {
     background-color: cornflowerblue;
-    color: #000;
+    color: #333;
     text-align: start;
     height: 50px;
     line-height: 60px;
@@ -147,8 +244,35 @@ export default {
 
   .el-main {
     background-color: #ffffff;
-    color: #333;
-    text-align: center;
-    line-height: 160px;
+    text-align: start;
+  }
+  .el-main-span1{
+    font-size: 30px;
+    font-weight: bold;
+  }
+  .el-main-span2{
+    font-family: 黑体;
+  }
+
+  .el-row2{
+    margin-top: 50px;
+  }
+  .boxcard1{
+    height: 580px;
+    margin-left: 50px;
+  }
+  .boxcard2{
+    height: 580px;
+    margin-right: 50px;
+  }
+
+  .el-table .warning-row {
+    background: #fdcb6e;
+  }
+  .el-table .success-row {
+    background: #55efc4;
+  }
+  .el-table .danger-row{
+    background-color: #ff7675;
   }
 </style>

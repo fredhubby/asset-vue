@@ -17,23 +17,23 @@ Vue.prototype.axios = axios
 
 Vue.config.productionTip = false
 
-router.beforeEach((to, from, next) => {
-  let isLogin = window.sessionStorage.getItem('isLogin')
-  // 退出登录
-  if (to.path === '/logout') {
-    // 清除状态
-    window.sessionStorage.clear()
-    next('/Login')
-  } else if (to.path === '/Login') {
-    // 已登录直接跳转首页
-    if (isLogin != null) {
-      next('/Main')
-    }
-  }else if (isLogin == null) {
-    next('/Login')
-  }
-  next()
-})
+// router.beforeEach((to, from, next) => {
+//   // let isLogin = window.sessionStorage.getItem('isLogin')
+//   // 退出登录
+//   if (to.path === '/logout') {
+//     // 清除状态
+//     window.sessionStorage.clear()
+//     next('/Login')
+//   } else if (to.path === '/Login') {
+//     // 已登录直接跳转首页
+//     if (isLogin != null) {
+//       next('/Main')
+//     }
+//   }else if (isLogin == null) {
+//     next('/Login')
+//   }
+//   next()
+// })
 
 new Vue({
   router,
