@@ -86,7 +86,7 @@ export default {
           {
             min: 6,
             max: 20,
-            message: '请输入确认密码',
+            message: '长度在 6 个字符以上',
             trigger: 'blur'
           },
           {
@@ -101,7 +101,7 @@ export default {
     onRegist (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          window.sessionStorage.setItem('isRegister', 'true')
+
           this.$router.push({ name: 'Login' })
         } else {
           alert('error register!!')
@@ -110,7 +110,7 @@ export default {
       })
     },
     back () {
-      this.$router.push('/Login')
+      this.$router.push('/')
     }
   }
 }

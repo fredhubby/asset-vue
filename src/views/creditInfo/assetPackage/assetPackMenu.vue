@@ -2,13 +2,13 @@
   <div>
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/Main"><i class="el-icon-s-home"></i></el-breadcrumb-item>
-      <el-breadcrumb-item class="el-breadcrumb1">查询统计</el-breadcrumb-item>
-      <el-breadcrumb-item class="el-breadcrumb1">分期还款企业名单</el-breadcrumb-item>
+      <el-breadcrumb-item class="el-breadcrumb1">债权信息</el-breadcrumb-item>
+      <el-breadcrumb-item class="el-breadcrumb1">资产包</el-breadcrumb-item>
     </el-breadcrumb>
     <el-row :gutter="20">
       <el-col :span="16">
         <div class="grid-content1">
-          <el-button type="primary" @click="addFqCompany">新增分期还款企业</el-button>
+          <el-button type="primary" @click="addAsset">新增资产包</el-button>
           <el-button>数据导出</el-button>
           <el-button>打印</el-button>
           <el-button>删除</el-button>
@@ -26,23 +26,25 @@
 
     <el-card class="box-card">
       <div slot="header" class="cardHeader">
-        <span>分期还款企业名单</span>
+        <span>资产包记录</span>
       </div>
       <div  class="text item">
         <el-table :data="tableData" border height="500" style="width: 100%" class="el-table"
                   ref="filterTable" @selection-change="handleSelectionChange" >
           <el-table-column type="selection" width="50"></el-table-column>
-          <el-table-column prop="zwr" label="债务人" width="200"></el-table-column>
-          <el-table-column prop="yhkbj" sortable label="应还款本金" width="250"></el-table-column>
-          <el-table-column prop="hkqx" sortable label="还款期限" width="250"></el-table-column>
-          <el-table-column prop="gjr" label="关键人" width="200"></el-table-column>
-          <el-table-column prop="zqr" label="债权人" width="200"
-                           :filters="[{text: '天惠投资', value: '天惠投资'}, {text: '天晟投资', value: '天晟投资'},
-                           {text: '天工惠农小贷', value: '天工惠农小贷'}, {text: '银润小贷', value: '银润小贷'}, {text: '阳光企业', value: '阳光企业'}]"
+          <el-table-column prop="zcbid" sortable label="资产包ID" width="280"></el-table-column>
+          <el-table-column prop="zqsl" sortable label="债权数量" width="120"></el-table-column>
+          <el-table-column prop="zqr" label="债权人" width="200"></el-table-column>
+          <el-table-column prop="yzqr" label="原债权人" width="250"></el-table-column>
+          <el-table-column prop="jyjzr" sortable label="交易基准日" width="150"
+                           :filters="[{text: '2016-05-01', value: '2016-05-01'}, {text: '2016-05-02', value: '2016-05-02'},
+                           {text: '2016-05-03', value: '2016-05-03'}, {text: '2016-05-04', value: '2016-05-04'}]"
                            :filter-method="filterHandler">
           </el-table-column>
-          <el-table-column prop="hkzt" label="还款状态" width="200"></el-table-column>
-          <el-table-column prop="bz" label="备注" width="300"></el-table-column>
+          <el-table-column prop="zfdjzfy" sortable label="支付对价总费用" width="150"></el-table-column>
+          <el-table-column prop="djzfr" label="对价支付人" width="120"></el-table-column>
+          <el-table-column prop="zqze" sortable label="债权总额" width="120"></el-table-column>
+          <el-table-column prop="djze" sortable label="对价总额" width="120"></el-table-column>
           <el-table-column prop="operate" fixed="right" label="操作" width="100">
             详情
           </el-table-column>
@@ -64,26 +66,25 @@
 
 <script>
 export default {
-  name: "fqCompany",
+  name: "assetPackMenu",
   data(){
     return{
       input1:'',
       currentPage: 1,
       tableData: [{
-        bz:'',
-        hkzt:'',
+        djze:'',
+        zqze:'',
+        djzfr:'',
+        zfdjzfy:'',
+        jyjzr:'',
+        yzqr:'',
         zqr:'',
-        gjr:'',
-        hkqx:'',
-        yhkbj:'',
-        zwr:''
+        zqsl:'',
+        zcbid:''
       }]
     }
   },
   methods:{
-    addFqCompany(){
-      this.$router.replace('/totalSearch/addfqCompanyInfo')
-    },
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
@@ -108,6 +109,9 @@ export default {
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
+    },
+    addAsset(){
+      this.$router.replace('/creditInfo/assetPackage/assetPackAdd')
     }
   }
 }

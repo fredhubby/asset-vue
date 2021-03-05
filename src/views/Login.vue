@@ -20,6 +20,8 @@
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
 
+import axios from "axios";
+
 export default {
   name: 'Login',
   data () {
@@ -62,14 +64,32 @@ export default {
     onSubmit (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          window.sessionStorage.setItem('isLogin', 'true')
-          this.$store.dispatch('asyncUpdateUser', { name: this.form.name })
+          // window.sessionStorage.setItem('isLogin', 'true')
+          // this.$store.dispatch('asyncUpdateUser', { name: this.form.name })
           // 页面跳转
           // this.$router.push('/Main')
           // this.$router.push({
           //   name: 'Main',
           //   params: { name: this.form.name }
           // })
+
+          axios.post('', {
+            name: '',
+            password: ''
+          })
+              .then(function (res) {
+                console.log(res);
+              })
+              .catch(function (err) {
+                console.log(err);
+              });
+
+          axios.get('https://autumnfish.cn/api/joke/list?num=4')
+              .then(function (response) {
+                console.log(response.data.jokes[0])
+              }).catch(function (error) {
+                console.log(error);
+              });
           this.$router.push({ name: 'Main' , replace: true})
         } else {
           alert('error submit!!')

@@ -1,7 +1,4 @@
 <template>
-<!--  <h1>这是主页面</h1>-->
-<!--  <span id="usrname">欢迎您：{{ $store.getters.getUser.name }}</span><br/>-->
-<!--  <span id="logintime">登录于：{{ logintime }}</span>-->
   <el-container>
     <el-header class="el-header" style="height: 80px">
       <el-row>
@@ -14,8 +11,8 @@
             <el-dropdown>
               <i class="el-icon-s-tools" style="margin-right: 15px"></i>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>个人信息</el-dropdown-item>
-                <el-dropdown-item>用户管理</el-dropdown-item>
+                <router-link to="/userInfo/userInfo"><el-dropdown-item>个人信息</el-dropdown-item></router-link>
+                <router-link to="/userInfo/userManage"><el-dropdown-item>用户管理</el-dropdown-item></router-link>
                 <el-dropdown-item>退出账户</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -24,52 +21,69 @@
       </el-row>
     </el-header>
     <el-container>
-      <el-aside width="240px">
+      <el-aside class="el-aside" width="240px">
         <el-menu >
           <el-menu-item index="1">
-            <span slot="title"><i class="el-icon-s-home"></i>首页</span>
+            <span slot="title">
+              <i class="el-icon-s-home"></i>
+              <router-link to="/Main">首页</router-link>
+            </span>
           </el-menu-item>
           <el-submenu index="2">
             <template slot="title"><i class="el-icon-menu"></i>债权信息</template>
             <el-menu-item-group>
 <!--              <template slot="title">分组一</template>-->
-              <el-menu-item index="2-1">债权基础信息</el-menu-item>
-              <el-menu-item index="2-2">资产包</el-menu-item>
+              <el-menu-item index="2-1">
+                <router-link to="/creditInfo/creditFinfo/creditMenu">债权基础信息</router-link>
+              </el-menu-item>
+              <el-menu-item index="2-2">
+                <router-link to="/creditInfo/assetPackage/assetPackMenu">资产包</router-link>
+              </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="3">
-            <template slot="title"><i class="el-icon-finished"></i>债权清收</template>
-            <el-menu-item-group>
-              <!--              <template slot="title">分组一</template>-->
-              <el-menu-item index="3-1">债权清收明细</el-menu-item>
-              <el-menu-item index="3-2">债权信息详情</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="4">
-            <template slot="title"><i class="el-icon-s-grid"></i>司法诉讼</template>
-            <el-menu-item-group>
-              <!--              <template slot="title">分组一</template>-->
-              <el-menu-item index="4-1">司法明细</el-menu-item>
-              <el-menu-item index="4-2">司法详情</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
+          <el-menu-item index="3">
+            <span slot="title">
+              <i class="el-icon-finished"></i>
+              <router-link to="/creditRecall/recallDetail">债权清收</router-link>
+            </span>
+          </el-menu-item>
+          <el-menu-item index="4">
+            <span slot="title">
+              <i class="el-icon-s-grid"></i>
+              <router-link to="/JudicialProceedings/JudicialDetail">司法诉讼</router-link>
+            </span>
+          </el-menu-item>
           <el-submenu index="5">
             <template slot="title"><i class="el-icon-user-solid"></i>个人信息</template>
             <el-menu-item-group>
               <!--              <template slot="title">分组一</template>-->
-              <el-menu-item index="5-1">用户资料</el-menu-item>
-              <el-menu-item index="5-2">用户管理</el-menu-item>
+              <el-menu-item index="5-1">
+                <router-link to="/userInfo/userInfo">用户资料</router-link>
+              </el-menu-item>
+              <el-menu-item index="5-2">
+                <router-link to="/userInfo/userManage">用户管理</router-link>
+              </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="6">
             <template slot="title"><i class="el-icon-search"></i>查询统计</template>
             <el-menu-item-group>
               <!--              <template slot="title">分组一</template>-->
-              <el-menu-item index="6-1">催收公告管理</el-menu-item>
-              <el-menu-item index="6-2">分期还款企业名单</el-menu-item>
-              <el-menu-item index="6-3">破产债权</el-menu-item>
-              <el-menu-item index="6-4">以物抵债资产管理</el-menu-item>
-              <el-menu-item index="6-5">债权转让</el-menu-item>
+              <el-menu-item index="6-1">
+                <router-link to="/totalSearch/collectionManage">催收公告管理</router-link>
+              </el-menu-item>
+              <el-menu-item index="6-2">
+                <router-link to="/totalSearch/fqCompany">分期还款企业名单</router-link>
+              </el-menu-item>
+              <el-menu-item index="6-3">
+                <router-link to="/totalSearch/crashedCredit">破产债权</router-link>
+              </el-menu-item>
+              <el-menu-item index="6-4">
+                <router-link to="/totalSearch/SMAD">以物抵债资产管理</router-link>
+              </el-menu-item>
+              <el-menu-item index="6-5">
+                <router-link to="/totalSearch/creditTransfer">债权转让</router-link>
+              </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -123,7 +137,7 @@
           </div>
           <router-view v-else/>
         </el-main>
-        <el-footer>Copyright © 江苏丹阳投资集团有限公司 版权所有</el-footer>
+        <el-footer class="el-footer">Copyright © 江苏丹阳投资集团有限公司 版权所有</el-footer>
       </el-container>
     </el-container>
   </el-container>
@@ -206,6 +220,15 @@ export default {
     margin: 0px;
     padding: 0px;
     height: 100%;
+  }
+  /*去掉原有链接文字下划线*/
+  a {
+    text-decoration: none;
+    color: #333333;
+   }
+  .router-link-active {
+    text-decoration: none;
+    color: #409eff;
   }
 
   .el-header{
