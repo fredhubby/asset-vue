@@ -54,8 +54,8 @@
     <el-form style="margin-top: 40px" ref="form1" :model="form1" label-width="130px">
       <el-row :gutter="60">
         <el-col :span="9" :offset="1">
-          <el-form-item label='借据号：' class="form_item" :error="form1_error.form_id">
-            <el-input v-model="form1.form_id" clearable @input="id_input_change" :disabled="!allow_edit"></el-input>
+          <el-form-item label='借据号：' class="form_item" :error="form1_error.form_iouId">
+            <el-input v-model="form1.form_iouId" clearable @input="id_input_change" :disabled="!allow_edit"></el-input>
           </el-form-item>
         </el-col>
 
@@ -145,6 +145,8 @@
                 type="date"
                 placeholder="选择日期"
                 style="width: 100%"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd"
                 :disabled="!allow_edit">
             </el-date-picker>
           </el-form-item>
@@ -157,6 +159,8 @@
                 type="date"
                 placeholder="选择日期"
                 style="width: 100%"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd"
                 :disabled="!allow_edit">
             </el-date-picker>
           </el-form-item>
@@ -199,6 +203,8 @@
                 type="date"
                 placeholder="选择日期"
                 style="width: 100%"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd"
                 :disabled="!allow_edit">
             </el-date-picker>
           </el-form-item>
@@ -217,129 +223,36 @@ export default {
   data() {
     return {
       activeIndex: '1',
-      options: [{
-        value: '天惠投资',
-        label: '天惠投资'
-      }, {
-        value: '天晟投资',
-        label: '天晟投资'
-      }, {
-        value: '天工惠农小贷',
-        label: '天工惠农小贷'
-      }, {
-        value: '银润小贷',
-        label: '银润小贷'
-      }, {
-        value: '阳光企业',
-        label: '阳光企业'
-      }],
-      options1: [{
-        value: '丹阳工行',
-        label: '丹阳工行'
-      }, {
-        value: '丹阳农行',
-        label: '丹阳农行'
-      }, {
-        value: '丹阳中行',
-        label: '丹阳中行'
-      }, {
-        value: '丹阳建行',
-        label: '丹阳建行'
-      }, {
-        value: '丹阳交行',
-        label: '丹阳交行'
-      }, {
-        value: '丹阳农发行',
-        label: '丹阳农发行'
-      }, {
-        value: '丹阳农商行',
-        label: '丹阳农商行'
-      }, {
-        value: '丹阳江苏',
-        label: '丹阳江苏'
-      }, {
-        value: '丹阳保得',
-        label: '丹阳保得'
-      }, {
-        value: '丹阳华夏',
-        label: '丹阳华夏'
-      }, {
-        value: '丹阳民生',
-        label: '丹阳民生'
-      }, {
-        value: '丹阳浦发',
-        label: '丹阳浦发'
-      }, {
-        value: '丹阳招商',
-        label: '丹阳招商'
-      }, {
-        value: '丹阳中信',
-        label: '丹阳中信'
-      }, {
-        value: '丹阳兴业',
-        label: '丹阳兴业'
-      }, {
-        value: '丹阳南京',
-        label: '丹阳南京'
-      }, {
-        value: '丹阳紫金农商',
-        label: '丹阳紫金农商'
-      }, {
-        value: '丹阳广发',
-        label: '丹阳广发'
-      }, {
-        value: '丹阳储蓄',
-        label: '丹阳储蓄'
-      }],
-      options2: [{
-        value: '云阳镇',
-        label: '云阳镇'
-      }, {
-        value: '开发区',
-        label: '开发区'
-      }, {
-        value: '新桥镇',
-        label: '新桥镇'
-      }, {
-        value: '后巷镇',
-        label: '后巷镇'
-      }, {
-        value: '界牌镇',
-        label: '界牌镇'
-      }, {
-        value: '陴城镇',
-        label: '陴城镇'
-      }, {
-        value: '访仙镇',
-        label: '访仙镇'
-      }, {
-        value: '吕城镇',
-        label: '吕城镇'
-      }, {
-        value: '陵口镇',
-        label: '陵口镇'
-      }, {
-        value: '珥陵镇',
-        label: '珥陵镇'
-      }, {
-        value: '导墅镇',
-        label: '导墅镇'
-      }, {
-        value: '皇堂镇',
-        label: '皇堂镇'
-      }, {
-        value: '延陵镇',
-        label: '延陵镇'
-      }],
-      options3: [{
-        value: '2',
-        label: '资产包'
-      }, {
-        value: '1',
-        label: '小贷公司'
-      }],
+      options: [
+        {value: '天惠投资', label: '天惠投资'}, {value: '天晟投资', label: '天晟投资'},
+        {value: '天工惠农小贷', label: '天工惠农小贷'}, {value: '银润小贷', label: '银润小贷'},
+        {value: '阳光企业', label: '阳光企业'}],
+      options1: [
+        {value: '丹阳工行', label: '丹阳工行'}, {value: '丹阳农行', label: '丹阳农行'},
+        {value: '丹阳中行', label: '丹阳中行'}, {value: '丹阳建行', label: '丹阳建行'},
+        {value: '丹阳交行', label: '丹阳交行'}, {value: '丹阳农发行', label: '丹阳农发行'},
+        {value: '丹阳农商行', label: '丹阳农商行'}, {value: '丹阳江苏', label: '丹阳江苏'},
+        {value: '丹阳保得', label: '丹阳保得'}, {value: '丹阳华夏', label: '丹阳华夏'},
+        {value: '丹阳民生', label: '丹阳民生'}, {value: '丹阳浦发', label: '丹阳浦发'},
+        {value: '丹阳招商', label: '丹阳招商'}, {value: '丹阳中信', label: '丹阳中信'},
+        {value: '丹阳兴业', label: '丹阳兴业'}, {value: '丹阳南京', label: '丹阳南京'},
+        {value: '丹阳紫金农商', label: '丹阳紫金农商'}, {value: '丹阳广发', label: '丹阳广发'},
+        {value: '丹阳储蓄', label: '丹阳储蓄'}],
+      options2: [
+        {value: '云阳镇', label: '云阳镇'}, {value: '开发区', label: '开发区'},
+        {value: '新桥镇', label: '新桥镇'}, {value: '后巷镇', label: '后巷镇'},
+        {value: '界牌镇', label: '界牌镇'}, {value: '陴城镇', label: '陴城镇'},
+        {value: '访仙镇', label: '访仙镇'}, {value: '吕城镇', label: '吕城镇'},
+        {value: '陵口镇', label: '陵口镇'}, {value: '珥陵镇', label: '珥陵镇'},
+        {value: '导墅镇', label: '导墅镇'}, {value: '皇堂镇', label: '皇堂镇'},
+        {value: '延陵镇', label: '延陵镇'}],
+      options3: [
+        {value: '2', label: '资产包'},
+        {value: '1', label: '小贷公司'},
+        {value: '0', label: '阳光担保'}],
       form1: {
         form_id: '',
+        form_iouId:'',
         form_contractNo: '',
         form_claimsType: '',
         form_assetPackageId: '',
@@ -356,7 +269,7 @@ export default {
         form_tradingBaseDate: ''
       },
       form1_error:{
-        form_id: '',
+        form_iouId: '',
       },
       allow_edit:false,
       edit_label:'编辑',
@@ -373,7 +286,7 @@ export default {
         iouId:_this.$route.query.iou,
       }
     }).then(data => {
-      console.log(data);
+      // console.log(data);
       _this.origin_form_data=data.data.datas
       this.jsondata2form(_this.origin_form_data)
     }).catch(err => {
@@ -383,6 +296,7 @@ export default {
   methods:{
     jsondata2form(data){
       this.form1.form_id = data.id;
+      this.form1.form_iouId = data.iouId;
       this.form1.form_contractNo = data.contractNo;
       this.form1.form_assetPackageId = data.assetPackageId;
       this.form1.form_obligor = data.obligor;
@@ -399,7 +313,7 @@ export default {
       this.form1.form_tradingBaseDate = data.tradingBaseDate;
     },
     id_input_change(){
-      this.form1_error.form_id='';
+      this.form1_error.form_iouId='';
     },
     claimType_change(){
 
@@ -419,11 +333,13 @@ export default {
     },
     submit(){
       var _this = this;
+      // console.log(this.form1)
       api({
         url: "CreditInfo/updateFundamentalCredit",
         method: "post",
         data:{
           id:_this.form1.form_id,
+          iouId:_this.form1.form_iouId,
           contractNo:_this.form1.form_contractNo,
           assetPackageId:_this.form1.form_assetPackageId,
           obligor:_this.form1.form_obligor,
@@ -440,7 +356,7 @@ export default {
           tradingBaseDate:_this.form1.form_tradingBaseDate,
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         location.reload();
       }).catch(err => {
         console.log(err);

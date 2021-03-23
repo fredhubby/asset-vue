@@ -38,6 +38,7 @@
           <el-form-item label="账号">
             <el-input v-model="form.account"></el-input>
           </el-form-item>
+          <el-button type="primary" @click="submit" style="margin-left: 45%">保存</el-button>
         </el-form>
       </el-card>
     </el-col>
@@ -53,7 +54,7 @@
           <el-form-item label="确认密码" prop="conpassword">
             <el-input type="password" v-model="form1.conpassword"></el-input>
           </el-form-item>
-          <el-button type="primary" @click="submit('form1')">确认修改</el-button>
+          <el-button type="primary" @click="edit('form1')" style="margin-left: 30%">确认修改</el-button>
           <el-button @click="reset('form1')">重置</el-button>
         </el-form>
       </el-card>
@@ -128,7 +129,13 @@ export default {
     }
   },
   methods:{
-    submit (formName) {
+    submit(){
+      this.$message({
+        type: 'success',
+        message: '信息修改成功'
+      });
+    },
+    edit (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$confirm('检测到未保存的内容，是否在离开页面前保存修改？', '确认信息', {

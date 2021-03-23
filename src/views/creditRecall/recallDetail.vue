@@ -10,7 +10,7 @@
         <div class="grid-content1">
           <el-button type="primary" @click="addRecall">新增还款记录</el-button>
           <el-button>数据导出</el-button>
-          <el-button>打印</el-button>
+<!--          <el-button>打印</el-button>-->
           <el-button>删除</el-button>
           <el-button>隐藏列</el-button>
           <el-popover

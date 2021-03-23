@@ -37,6 +37,7 @@ import SMADxq from "@/views/totalSearch/SMADXQ/SMADxq";
 import SMADFinfo from "@/views/totalSearch/SMADXQ/SMADFinfo";
 import SMADauction from "@/views/totalSearch/SMADXQ/SMADauction";
 import SMADinfo from "@/views/totalSearch/SMADXQ/SMADinfo";
+import crashedCreditDetail from "@/views/totalSearch/crashedCreditDetail";
 
 Vue.use(VueRouter)
 
@@ -176,6 +177,11 @@ const routes = [
         path: '/totalSearch/addCrashedCreditInfo',
         name: 'addCrashedCreditInfo',
         component: addCrashedCreditInfo
+      },
+      {
+        path: '/totalSearch/crashedCreditDetail',
+        name: 'crashedCreditDetail',
+        component: crashedCreditDetail
       },
       {
         path: '/totalSearch/SMAD',

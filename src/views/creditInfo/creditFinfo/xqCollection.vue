@@ -67,77 +67,79 @@
       </el-form-item>
 
       <el-divider></el-divider>
-      <span class="span1">催收借据</span>
-      <el-form-item label="借据1：" style="margin-top: 20px">
-        <el-input v-model="formLabelAlign.list1" clearable style="width: 40%"></el-input><i class="el-icon-remove"></i>
-      </el-form-item>
-      <el-form-item label="借据2：">
-        <el-input v-model="formLabelAlign.list2" clearable style="width: 40%"></el-input><i class="el-icon-circle-plus"></i><i class="el-icon-remove"></i>
-      </el-form-item>
+      <span class="span1">借据对象</span>
+      <div>
+        <div v-for="(iou,index) in formLabelAlign.iou"
+             :key="iou.key" style="margin-top: 20px">
+          <el-row :gutter="30">
+            <el-col :span="9" :offset="1">
+              <el-form-item :label="'借据号'+(index+1)+'：'" class="form_item">
+                <el-input v-model="iou.value" clearable style="width: 100%"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="2">
+              <el-button @click.prevent="removeIou(iou)" type="danger">删除</el-button>
+            </el-col>
+          </el-row>
+        </div>
+        <el-form-item style="margin-left: 15%">
+          <el-button type="primary" @click="addIou">新增借据</el-button>
+          <el-button @click="resetIou">重置</el-button>
+        </el-form-item>
+      </div>
 
       <el-divider></el-divider>
       <span class="span1">催收公告日</span>
-      <el-form-item label="公告日1：" style="margin-top: 20px">
-        <el-date-picker
-            clearable
-            v-model="formLabelAlign.date1"
-            type="date"
-            placeholder="选择日期">
-        </el-date-picker><i class="el-icon-remove"></i>
-      </el-form-item>
-      <el-form-item label="公告日2：">
-        <el-date-picker
-            clearable
-            v-model="formLabelAlign.date2"
-            type="date"
-            placeholder="选择日期">
-        </el-date-picker><i class="el-icon-remove"></i>
-      </el-form-item>
-      <el-form-item label="最新公告日：">
-        <el-date-picker
-            clearable
-            v-model="formLabelAlign.date3"
-            type="date"
-            placeholder="选择日期">
-        </el-date-picker><i class="el-icon-circle-plus"></i><i class="el-icon-remove"></i>
-      </el-form-item>
+      <div>
+        <div v-for="(date,index) in formLabelAlign.date"
+             :key="date.key" style="margin-top: 20px">
+          <el-row :gutter="30">
+            <el-col :span="9" :offset="1">
+              <el-form-item :label="'公告日'+(index+1)+'：'" class="form_item">
+                <el-date-picker
+                    v-model="date.value"
+                    type="date"
+                    placeholder="选择日期"
+                    style="width: 100%">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="2">
+              <el-button @click.prevent="removeDate(date)" type="danger">删除</el-button>
+            </el-col>
+          </el-row>
+        </div>
+        <el-form-item style="margin-left: 15%">
+          <el-button type="primary" @click="addDate">新增催收公告日</el-button>
+          <el-button @click="resetDate">重置</el-button>
+        </el-form-item>
+      </div>
     </el-form>
   </div>
 </template>
 
 <script>
 export default {
-  name: "xqCollection",
+  name: "addCollection",
   data(){
     return{
-      activeIndex: '6',
+      activeIndex:'6',
       labelPosition: 'right',
+      temp_iouId:0,
+      temp_dateId:0,
       formLabelAlign: {
         value: '',
         value1: '',
         value2: '',
-        list1:'',
-        list2:'',
-        date1:'',
-        date2:'',
-        date3:''
+        iou:[{key:'', value: ''}],
+        date:[{key:'', value: ''}]
       },
-      options: [{
-        value: '选项1',
-        label: '天惠投资'
-      }, {
-        value: '选项2',
-        label: '天晟投资'
-      }, {
-        value: '选项3',
-        label: '天工惠农小贷'
-      }, {
-        value: '选项4',
-        label: '银润小贷'
-      }, {
-        value: '选项5',
-        label: '阳光企业'
-      }],
+      options: [
+        {value: '天惠投资', label: '天惠投资'},
+        {value: '天晟投资', label: '天晟投资'},
+        {value: '天工惠农小贷', label: '天工惠农小贷'},
+        {value: '银润小贷', label: '银润小贷'},
+        {value: '阳光企业', label: '阳光企业'}],
       options1: [{
         value: '选项1',
         label: '丹阳工行'
@@ -195,12 +197,47 @@ export default {
       }, {
         value: '选项19',
         label: '丹阳储蓄'
-      }]
+      }],
+      pickerOptions:[]
     }
   },
   methods:{
     reset(){
       this.formLabelAlign = this.$options.data().formLabelAlign
+    },
+    //借据对象
+    addIou(){
+      this.formLabelAlign.iou.push({key:this.getTempIouId,value: ''});
+    },
+    removeIou(iou){
+      var index = this.formLabelAlign.iou.indexOf(iou);
+      if (index !== -1) {
+        this.formLabelAlign.iou.splice(index, 1);
+      }
+    },
+    resetIou(){
+      this.formLabelAlign.iou=[{key:this.getTempIouId, value: ''}];
+    },
+    //催收公告日
+    addDate(){
+      this.formLabelAlign.date.push({key:this.getTempDateId,value: ''});
+    },
+    removeDate(date){
+      var index = this.formLabelAlign.date.indexOf(date);
+      if (index !== -1) {
+        this.formLabelAlign.date.splice(index, 1);
+      }
+    },
+    resetDate(){
+      this.formLabelAlign.date=[{key:this.getTempDateId, value: ''}];
+    }
+  },
+  computed:{
+    getTempIouId(){
+      this.temp_iouId++;
+    },
+    getTempDateId(){
+      this.temp_dateId++;
     }
   }
 }

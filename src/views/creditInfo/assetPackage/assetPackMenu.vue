@@ -9,34 +9,62 @@
       <el-col :span="16">
         <div class="grid-content1">
           <el-button type="primary" @click="addAsset">新增资产包</el-button>
-          <el-button>数据导出</el-button>
-          <el-button>打印</el-button>
-          <el-button>删除</el-button>
-          <el-button>隐藏列</el-button>
+          <el-button type="success">数据导出</el-button>
+<!--          <el-button>打印</el-button>-->
+          <el-popconfirm
+              title="确定删除资产包数据？"
+              @confirm="deleteAssetPack">
+            <el-button slot="reference" type="danger">删除</el-button>
+          </el-popconfirm>
+
+          <el-popover
+              width="600"
+              placement="down"
+              trigger="click">
+            <el-form ref="form1" :model="form1">
+              <el-form-item>
+                <el-row :gutter="20" type="flex" class="row-bg">
+                  <el-col :span="20" :offset="1"><el-checkbox v-model="form1.assetPackageId_show">资产包ID</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form1.creditNum_show">债权数量</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form1.creditor_show">债权人</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form1.originalCreditor_show">原债权人</el-checkbox></el-col>
+                </el-row>
+                <el-row :gutter="20" type="flex" class="row-bg">
+                  <el-col :span="20" :offset="1"><el-checkbox v-model="form1.totalConsiderationPaid_show">支付对价总费用</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form1.considerationPayer_show">对价支付人</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form1.recycleTotal_show">回收款合计</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form1.costDebtTotal_show">债权总成本</el-checkbox></el-col>
+                </el-row>
+              </el-form-item>
+            </el-form>
+            <el-button slot="reference" type="warning">隐藏列<i class="el-icon-caret-bottom"></i></el-button>
+          </el-popover>
+
           <el-popover
               placement="down"
-
               trigger="click">
             <el-form ref="form1" :model="form1">
               <el-row :gutter="20" type="flex" class="row-bg">
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.zqsl_checked">债权数量</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.creditNum_checked">债权数量</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.zqsl" clearable :disabled="Boolean(!form1.zqsl_checked)"></el-input></el-col>
+                  <el-col :span="30"><el-input v-model="form1.creditNum" clearable
+                                               :disabled="Boolean(!form1.creditNum_checked)"></el-input></el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.zcbID_checked">资产包ID</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.assetPackageId_checked">资产包ID</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.zcbID" clearable :disabled="Boolean(!form1.zcbID_checked)"></el-input></el-col>
+                  <el-col :span="30"><el-input v-model="form1.assetPackageId" clearable
+                                               :disabled="Boolean(!form1.assetPackageId_checked)"></el-input></el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.zqr_checked">债权人</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.creditor_checked">债权人</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
                   <el-col :span="30">
-                    <el-select v-model="form1.zqr" clearable :disabled="Boolean(!form1.zqr_checked)">
+                    <el-select v-model="form1.creditor" clearable :disabled="Boolean(!form1.creditor_checked)">
                       <el-option
                           v-for="item in options1"
                           :key="item.value"
@@ -49,11 +77,11 @@
               </el-row>
               <el-row :gutter="20" type="flex" class="row-bg">
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.yzqr_checked">原债权人</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.originalCreditor_checked">原债权人</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
                   <el-col :span="30">
-                    <el-select v-model="form1.yzqr" clearable :disabled="Boolean(!form1.yzqr_checked)">
+                    <el-select v-model="form1.originalCreditor" clearable :disabled="Boolean(!form1.originalCreditor_checked)">
                       <el-option
                           v-for="item in options2"
                           :key="item.value"
@@ -64,52 +92,43 @@
                   </el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.jyjzr_checked">交易基准日</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.recycleTotal_checked">回收款合计</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
                   <el-col :span="30">
-                    <el-date-picker
-                        v-model="form1.jyjzr"
-                        type="daterange"
-                        :disabled="Boolean(!form1.jyjzr_checked)"
-                        range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期">
-                    </el-date-picker>
+                    <el-input v-model="form1.recycleTotal" clearable
+                              :disabled="Boolean(!form1.recycleTotal_checked)"></el-input>
                   </el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.djzfr_checked">对价支付人</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.considerationPayer_checked">对价支付人</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.djzfr" clearable :disabled="Boolean(!form1.djzfr_checked)"></el-input></el-col>
+                  <el-col :span="30"><el-input v-model="form1.considerationPayer" clearable
+                                               :disabled="Boolean(!form1.considerationPayer_checked)"></el-input></el-col>
                 </el-form-item>
               </el-row>
               <el-row :gutter="20" type="flex" class="row-bg">
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.zfdj_checked">支付对价总费用</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.totalConsiderationPaid_checked">支付对价总费用</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.zfdj" clearable :disabled="Boolean(!form1.zfdj_checked)"></el-input></el-col>
+                  <el-col :span="30"><el-input v-model="form1.totalConsiderationPaid" clearable
+                                               :disabled="Boolean(!form1.totalConsiderationPaid_checked)"></el-input></el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.zqze_checked">债权总额</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.costDebtTotal_checked">债权总成本</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.zqze" clearable :disabled="Boolean(!form1.zqze_checked)"></el-input></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.djze_checked">对价总额</el-checkbox></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.djze" clearable :disabled="Boolean(!form1.djze_checked)"></el-input></el-col>
+                  <el-col :span="30"><el-input v-model="form1.costDebtTotal" clearable
+                                               :disabled="Boolean(!form1.costDebtTotal_checked)"></el-input></el-col>
                 </el-form-item>
               </el-row>
 
               <el-button @click="reset('form1')">清空</el-button>
               <el-button type="primary" @click="submit">筛选</el-button>
             </el-form>
-            <el-button slot="reference">筛选<i class="el-icon-caret-bottom"></i></el-button>
+            <el-button slot="reference" type="success">筛选<i class="el-icon-caret-bottom"></i></el-button>
           </el-popover>
         </div>
       </el-col>
@@ -130,17 +149,18 @@
         <el-table :data="tableData" border height="500" style="width: 100%" class="el-table"
                   ref="filterTable" @selection-change="handleSelectionChange" >
           <el-table-column type="selection" width="50"></el-table-column>
-          <el-table-column prop="zcbid" sortable label="资产包ID" width="280"></el-table-column>
-          <el-table-column prop="zqsl" sortable label="债权数量" width="120"></el-table-column>
-          <el-table-column prop="zqr" label="债权人" width="200"></el-table-column>
-          <el-table-column prop="yzqr" label="原债权人" width="250"></el-table-column>
-          <el-table-column prop="jyjzr" sortable label="交易基准日" width="150"></el-table-column>
-          <el-table-column prop="zfdjzfy" sortable label="支付对价总费用" width="150"></el-table-column>
-          <el-table-column prop="djzfr" label="对价支付人" width="120"></el-table-column>
-          <el-table-column prop="zqze" sortable label="债权总额" width="120"></el-table-column>
-          <el-table-column prop="djze" sortable label="对价总额" width="120"></el-table-column>
+          <el-table-column prop="id" sortable label="资产包ID" width="280" v-if="!form1.assetPackageId_show"></el-table-column>
+          <el-table-column prop="creditNum" sortable label="债权数量" width="120" v-if="!form1.creditNum_show"></el-table-column>
+          <el-table-column prop="creditor" label="债权人" width="200" v-if="!form1.creditor_show"></el-table-column>
+          <el-table-column prop="originalCreditor" label="原债权人" width="250" v-if="!form1.originalCreditor_show"></el-table-column>
+          <el-table-column prop="recycleTotal" sortable label="回收款合计" width="150" v-if="!form1.recycleTotal_show"></el-table-column>
+          <el-table-column prop="totalConsiderationPaid" sortable label="支付对价总费用" width="150" v-if="!form1.totalConsiderationPaid_show"></el-table-column>
+          <el-table-column prop="considerationPayer" label="对价支付人" width="120" v-if="!form1.considerationPayer_show"></el-table-column>
+          <el-table-column prop="costDebtTotal" sortable label="债权总成本" width="120" v-if="!form1.costDebtTotal_show"></el-table-column>
           <el-table-column prop="operate" fixed="right" label="操作" width="100">
-            详情
+            <template slot-scope="scope">
+              <el-button @click="assetPackDetail(scope.row)" type="text" size="small">查看</el-button>
+            </template>
           </el-table-column>
         </el-table>
 
@@ -149,9 +169,9 @@
                        @current-change="handleCurrentChange"
                        :current-page="currentPage"
                        :page-sizes="[10, 20, 30, 40, 50]"
-                       :page-size="10"
+                       :page-size="pagesize"
                        layout="total, sizes, prev, pager, next, jumper"
-                       :total="400">
+                       :total="totalsize">
         </el-pagination>
       </div>
     </el-card>
@@ -159,119 +179,69 @@
 </template>
 
 <script>
+import {default as api} from "@/utils/api";
+
 export default {
   name: "assetPackMenu",
   data(){
     return{
       input1:'',
-      currentPage: 1,
       form1: {
-        zcbID_checked: false,
-        zcbID: '',
-        zqsl_checked: false,
-        zqsl: '',
-        zqr_checked: false,
-        zqr: '',
-        yzqr_checked: false,
-        yzqr: '',
-        jyjzr_checked: false,
-        jyjzr: '',
-        djzfr_checked: false,
-        djzfr: '',
-        zfdj_checked: false,
-        zfdj: '',
-        zqze_checked: false,
-        zqze: '',
-        djze_checked: false,
-        djze: ''
+        assetPackageId_checked: false,
+        assetPackageId: '',
+        creditNum_checked: false,
+        creditNum: '',
+        creditor_checked: false,
+        creditor: '',
+        originalCreditor_checked: false,
+        originalCreditor: '',
+        totalConsiderationPaid_checked: false,
+        totalConsiderationPaid:'',
+        considerationPayer_checked: false,
+        considerationPayer: '',
+        recycleTotal_checked: false,
+        recycleTotal: '',
+        costDebtTotal_checked: false,
+        costDebtTotal: '',
+
+        assetPackageId_show:false,
+        creditNum_show:false,
+        creditor_show:false,
+        originalCreditor_show:false,
+        totalConsiderationPaid_show:false,
+        considerationPayer_show:false,
+        recycleTotal_show:false,
+        costDebtTotal_show:false,
       },
-      tableData: [{
-        djze:'',
-        zqze:'',
-        djzfr:'',
-        zfdjzfy:'',
-        jyjzr:'',
-        yzqr:'',
-        zqr:'',
-        zqsl:'',
-        zcbid:''
-      }],
+      currentPage: 1,
+      pagesize:10,
+      totalsize:10,
+      tableData: [],
+      multipleSelection:[],
       pickerOptions:[],
-      options1:[{
-        value: '天惠投资',
-        label: '天惠投资'
-      }, {
-        value: '天晟投资',
-        label: '天晟投资'
-      }, {
-        value: '天工惠农小贷',
-        label: '天工惠农小贷'
-      }, {
-        value: '银润小贷',
-        label: '银润小贷'
-      }, {
-        value: '阳光企业',
-        label: '阳光企业'
-      }],
-      options2: [{
-        value: '丹阳工行',
-        label: '丹阳工行'
-      }, {
-        value: '丹阳农行',
-        label: '丹阳农行'
-      }, {
-        value: '丹阳中行',
-        label: '丹阳中行'
-      }, {
-        value: '丹阳建行',
-        label: '丹阳建行'
-      }, {
-        value: '丹阳交行',
-        label: '丹阳交行'
-      }, {
-        value: '丹阳农发行',
-        label: '丹阳农发行'
-      }, {
-        value: '丹阳农商行',
-        label: '丹阳农商行'
-      }, {
-        value: '丹阳江苏',
-        label: '丹阳江苏'
-      }, {
-        value: '丹阳保得',
-        label: '丹阳保得'
-      }, {
-        value: '丹阳华夏',
-        label: '丹阳华夏'
-      }, {
-        value: '丹阳民生',
-        label: '丹阳民生'
-      }, {
-        value: '丹阳浦发',
-        label: '丹阳浦发'
-      }, {
-        value: '丹阳招商',
-        label: '丹阳招商'
-      }, {
-        value: '丹阳中信',
-        label: '丹阳中信'
-      }, {
-        value: '丹阳兴业',
-        label: '丹阳兴业'
-      }, {
-        value: '丹阳南京',
-        label: '丹阳南京'
-      }, {
-        value: '丹阳紫金农商',
-        label: '丹阳紫金农商'
-      }, {
-        value: '丹阳广发',
-        label: '丹阳广发'
-      }, {
-        value: '丹阳储蓄',
-        label: '丹阳储蓄'
-      }]
+      options1:[
+        {value: '天惠投资', label: '天惠投资'},
+        {value: '天晟投资', label: '天晟投资'},
+        {value: '天工惠农小贷', label: '天工惠农小贷'},
+        {value: '银润小贷', label: '银润小贷'},
+        {value: '阳光企业', label: '阳光企业'}],
+      options2: [
+        {value: '丹阳工行', label: '丹阳工行'}, {value: '丹阳农行', label: '丹阳农行'},
+        {value: '丹阳中行', label: '丹阳中行'}, {value: '丹阳建行', label: '丹阳建行'},
+        {value: '丹阳交行', label: '丹阳交行'}, {value: '丹阳农发行', label: '丹阳农发行'},
+        {value: '丹阳农商行', label: '丹阳农商行'}, {value: '丹阳江苏', label: '丹阳江苏'},
+        {value: '丹阳保得', label: '丹阳保得'}, {value: '丹阳华夏', label: '丹阳华夏'},
+        {value: '丹阳民生', label: '丹阳民生'}, {value: '丹阳浦发', label: '丹阳浦发'},
+        {value: '丹阳招商', label: '丹阳招商'}, {value: '丹阳中信', label: '丹阳中信'},
+        {value: '丹阳兴业', label: '丹阳兴业'}, {value: '丹阳南京', label: '丹阳南京'},
+        {value: '丹阳紫金农商', label: '丹阳紫金农商'}, {value: '丹阳广发', label: '丹阳广发'},
+        {value: '丹阳储蓄', label: '丹阳储蓄'}]
     }
+  },
+  created() {
+    this.pagesize=10;
+    this.currentPage=1;
+    this.getAssetPackageList();
   },
   methods:{
     reset(){
@@ -289,24 +259,69 @@ export default {
         this.$refs.multipleTable.clearSelection();
       }
     },
+    getAssetPackageList(){
+      var _this = this;
+      api({
+        url: "assetPackage/getAssetPackageList",
+        method: "get",
+        params:{
+          current:_this.currentPage,
+          size:_this.pagesize
+        }
+      }).then(data => {
+        console.log(data);
+        this.tableData = data.data.datas.records;
+        this.totalsize = data.data.datas.total;
+      }).catch(err => {
+        console.log(err);
+      })
+    },
+    deleteAssetPack(){
+      if(this.multipleSelection_asset.length===0){
+        alert('请先选择要删除的资产包');
+      }
+      else{
+        var _this = this;
+        api({
+          url: "/assetPackage/deleteAssetPackage",
+          method: "post",
+          data:this.multipleSelection_asset
+        }).then(data => {
+          console.log(data);
+          location.reload();
+        }).catch(err => {
+          console.log(err);
+        })
+      }
+    },
+    assetPackDetail(row){
+      this.$router.push({path:'/creditInfo/assetPackage/assetPackInfo',query:{assetPackageId:row.id}})
+    },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    // formatter(row, column) {
-    //   return row.address;
-    // },
-    filterHandler(value, row, column) {
-      const property = column['property'];
-      return row[property] === value;
-    },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      this.pagesize=val;
+      this.getAssetPackageList();
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.currentPage=val;
+      this.getAssetPackageList();
     },
     addAsset(){
       this.$router.replace('/creditInfo/assetPackage/assetPackAdd')
+    }
+  },
+  computed:{
+    multipleSelection_asset:function (){
+      let assets=[];
+      let i;
+      for(i=0;i<this.multipleSelection.length;i++){
+        assets.push(this.multipleSelection[i].id);
+      }
+      console.log('assets')
+      console.log(assets)
+      return assets;
     }
   }
 }

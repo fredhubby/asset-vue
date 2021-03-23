@@ -47,53 +47,95 @@
 <!--            :props="{ expandTrigger: 'hover' }"-->
 <!--            @change="handleCascaderChange">-->
 <!--          </el-cascader>-->
-          <el-button>数据导出</el-button>
-          <el-button>打印</el-button>
+          <el-button @click="" type="success">数据导出</el-button>
+<!--          <el-button>打印</el-button>-->
           <el-popconfirm
               title="确定删除借据数据？"
               @confirm="deleteCreditList">
-            <el-button slot="reference">删除</el-button>
+            <el-button slot="reference" type="danger">删除</el-button>
           </el-popconfirm>
-<!--          <el-button>删除</el-button>-->
-          <el-button>隐藏列</el-button>
+
+          <el-popover
+              width="600"
+              placement="down"
+              trigger="click">
+            <el-form ref="form1" :model="form">
+              <el-form-item>
+                <el-row :gutter="20" type="flex" class="row-bg">
+                  <el-col :span="20" :offset="1"><el-checkbox v-model="form.id_show">借据号</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form.contractNo_show">借款合同号</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form.assetPackageId_show">资产包ID</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form.obligor_show">债务人</el-checkbox></el-col>
+                </el-row>
+                <el-row :gutter="20" type="flex" class="row-bg">
+                  <el-col :span="20" :offset="1"><el-checkbox v-model="form.region_show">所在镇区</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form.creditor_show">债权人</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form.originalCreditor_show">原债权人</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form.claimsType_show">债权类别</el-checkbox></el-col>
+                </el-row>
+                <el-row :gutter="20" type="flex" class="row-bg">
+                  <el-col :span="20" :offset="1"><el-checkbox v-model="form.loanCompensationDate_show">借款(代偿)日</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form.loanCompensationDueDate_show">借款(代偿)到期日</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form.principalOfLoan_show">交易日借款本金</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form.annualInterestRate_show">借款年利率</el-checkbox></el-col>
+                </el-row>
+                <el-row :gutter="20" type="flex" class="row-bg">
+                  <el-col :span="20" :offset="1"><el-checkbox v-model="form.penaltyAnnualInterestRate_show">逾期罚息年利率</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form.loanInterest_show">交易日借款利息</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form.tradingBaseDate_show">交易基准日</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form.transferType_show">是否转让</el-checkbox></el-col>
+                </el-row>
+                <el-row :gutter="20" type="flex" class="row-bg">
+                  <el-col :span="20" :offset="1"><el-checkbox v-model="form.acquisitionCost_show">取得成本</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form.valuationPrice_show">评估价格</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form.transferPrice_show">转让价格</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form.claimsProgress_show">债权转让进度</el-checkbox></el-col>
+                </el-row>
+                <el-row :gutter="20" type="flex" class="row-bg">
+                  <el-col :span="20" :offset="1"><el-checkbox v-model="form.remarks_show">备注</el-checkbox></el-col>
+                </el-row>
+              </el-form-item>
+            </el-form>
+            <el-button slot="reference" type="warning">隐藏列<i class="el-icon-caret-bottom"></i></el-button>
+          </el-popover>
+
           <el-popover
               placement="down"
-
               trigger="click">
             <el-form ref="form1" :model="form1">
               <el-row :gutter="20" type="flex" class="row-bg">
                   <el-form-item label="">
-                      <el-col :span="2"><el-checkbox v-model="form1.jjh_checked">借据号</el-checkbox></el-col>
+                      <el-col :span="2"><el-checkbox v-model="form1.id_checked">借据号</el-checkbox></el-col>
                   </el-form-item>
                   <el-form-item>
-                      <el-col :span="30"><el-input v-model="form1.jjh" clearable :disabled="Boolean(!form1.jjh_checked)"></el-input></el-col>
+                      <el-col :span="30"><el-input v-model="form1.id" clearable :disabled="Boolean(!form1.id_checked)"></el-input></el-col>
                   </el-form-item>
                   <el-form-item>
-                      <el-col :span="2"><el-checkbox v-model="form1.hth_checked">借款合同号</el-checkbox></el-col>
+                      <el-col :span="2"><el-checkbox v-model="form1.contractNo_checked">借款合同号</el-checkbox></el-col>
                   </el-form-item>
                   <el-form-item>
-                      <el-col :span="30"><el-input v-model="form1.hth" clearable :disabled="Boolean(!form1.hth_checked)"></el-input></el-col>
+                      <el-col :span="30"><el-input v-model="form1.contractNo" clearable :disabled="Boolean(!form1.contractNo_checked)"></el-input></el-col>
                   </el-form-item>
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.zcbID_checked">资产包ID</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.assetPackageId_checked">资产包ID</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.zcbID" clearable :disabled="Boolean(!form1.zcbID_checked)"></el-input></el-col>
+                  <el-col :span="30"><el-input v-model="form1.assetPackageId" clearable :disabled="Boolean(!form1.assetPackageId_checked)"></el-input></el-col>
                 </el-form-item>
               </el-row>
               <el-row :gutter="20" type="flex" class="row-bg">
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.zwr_checked">债务人</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.obligor_checked">债务人</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.zwr" clearable :disabled="Boolean(!form1.zwr_checked)"></el-input></el-col>
+                  <el-col :span="30"><el-input v-model="form1.obligor" clearable :disabled="Boolean(!form1.obligor_checked)"></el-input></el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.szzq_checked">所在镇区</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.region_checked">所在镇区</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
                   <el-col :span="30">
-                    <el-select v-model="form1.szzq"  clearable :disabled="Boolean(!form1.szzq_checked)">
+                    <el-select v-model="form1.region"  clearable :disabled="Boolean(!form1.region_checked)">
                       <el-option
                           v-for="item in options1"
                           :key="item.value"
@@ -104,11 +146,11 @@
                   </el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.zqr_checked">债权人</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.creditor_checked">债权人</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
                   <el-col :span="30">
-                    <el-select v-model="form1.zqr" clearable :disabled="Boolean(!form1.zqr_checked)">
+                    <el-select v-model="form1.creditor" clearable :disabled="Boolean(!form1.creditor_checked)">
                       <el-option
                           v-for="item in options2"
                           :key="item.value"
@@ -121,11 +163,11 @@
               </el-row>
               <el-row :gutter="20" type="flex" class="row-bg">
                 <el-form-item>
-                <el-col :span="2"><el-checkbox v-model="form1.yzqr_checked">原债权人</el-checkbox></el-col>
+                <el-col :span="2"><el-checkbox v-model="form1.originalCreditor_checked">原债权人</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
                   <el-col :span="30">
-                    <el-select v-model="form1.yzqr" clearable :disabled="Boolean(!form1.yzqr_checked)">
+                    <el-select v-model="form1.originalCreditor" clearable :disabled="Boolean(!form1.originalCreditor_checked)">
                       <el-option
                           v-for="item in options3"
                           :key="item.value"
@@ -136,11 +178,11 @@
                   </el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.zqlb_checked">债权类别</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.claimsType_checked">债权类别</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
                   <el-col :span="30">
-                    <el-select v-model="form1.zqlb" clearable :disabled="Boolean(!form1.zqlb_checked)">
+                    <el-select v-model="form1.claimsType" clearable :disabled="Boolean(!form1.claimsType_checked)">
                       <el-option
                           v-for="item in options4"
                           :key="item.value"
@@ -151,14 +193,14 @@
                   </el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.jkr_checked">借款（代偿）日</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.loanCompensationDate_checked">借款（代偿）日</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
                   <el-col :span="30">
                     <el-date-picker
-                        v-model="form1.jkr"
+                        v-model="form1.loanCompensationDate"
                         type="daterange"
-                        :disabled="Boolean(!form1.jkr_checked)"
+                        :disabled="Boolean(!form1.loanCompensationDate_checked)"
                         range-separator="至"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期">
@@ -168,14 +210,14 @@
               </el-row>
               <el-row :gutter="20" type="flex" class="row-bg">
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.jkdqr_checked">借款（代偿）到期日</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.loanCompensationDueDate_checked">借款（代偿）到期日</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
                   <el-col :span="30">
                     <el-date-picker
-                        v-model="form1.jkdqr"
+                        v-model="form1.loanCompensationDueDate"
                         type="daterange"
-                        :disabled="Boolean(!form1.jkdqr_checked)"
+                        :disabled="Boolean(!form1.loanCompensationDueDate_checked)"
                         range-separator="至"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期">
@@ -183,14 +225,14 @@
                   </el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.jyjzr_checked">交易基准日</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.tradingBaseDate_checked">交易基准日</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
                   <el-col :span="30">
                     <el-date-picker
-                        v-model="form1.jyjzr"
+                        v-model="form1.tradingBaseDate"
                         type="daterange"
-                        :disabled="Boolean(!form1.jyjzr_checked)"
+                        :disabled="Boolean(!form1.tradingBaseDate_checked)"
                         range-separator="至"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期">
@@ -200,11 +242,11 @@
               </el-row>
               <el-row :gutter="30" type="flex" class="row-bg">
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.zr_checked">是否转让</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.transferType_checked">是否转让</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
                   <el-col :span="20">
-                    <el-select v-model="form1.zr" :disabled="Boolean(!form1.zr_checked)">
+                    <el-select v-model="form1.transferType" :disabled="Boolean(!form1.transferType_checked)">
                       <el-option
                           v-for="item in options5"
                           :key="item.value"
@@ -215,11 +257,12 @@
                   </el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.zrjd_checked">债权转让进度</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.claimsProgress_checked">债权转让进度</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
                   <el-col :span="20">
-                    <el-select v-model="form1.zrjd" :disabled="Boolean(!(form1.zrjd_checked && form1.zr_checked))">
+                    <el-select v-model="form1.claimsProgress"
+                               :disabled="Boolean(!(form1.claimsProgress_checked && form1.transferType_checked))">
                       <el-option
                           v-for="item in options6"
                           :key="item.value"
@@ -233,9 +276,9 @@
               </el-row>
 <!--                -->
               <el-button @click="reset('form1')">清空</el-button>
-              <el-button type="primary" @click="submit">筛选</el-button>
+              <el-button type="primary" @click="screen">筛选</el-button>
             </el-form>
-            <el-button slot="reference">筛选<i class="el-icon-caret-bottom"></i></el-button>
+            <el-button slot="reference" type="success">筛选<i class="el-icon-caret-bottom"></i></el-button>
           </el-popover>
         </div>
       </el-col>
@@ -256,27 +299,27 @@
         <el-table :data="tableData" border height="500" style="width: 100%" class="el-table"
                   ref="filterTable" @selection-change="handleSelectionChange" >
           <el-table-column type="selection" width="50"></el-table-column>
-          <el-table-column prop="id" label="借据号" width="200" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="contractNo" label="借款合同号" width="200" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="assetPackageId" label="资产包ID" width="200" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="obligor" label="债务人" width="150" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="region" label="所在镇区" width="150" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="creditor" label="债权人" width="150" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="originalCreditor" label="原债权人" width="150" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="claimsType" label="债权类别" width="150" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="loanCompensationDate" label="借款(代偿)日" width="100" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="loanCompensationDueDate" label="借款(代偿)到期日" width="120" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="principalOfLoan" label="交易日借款本金" width="120" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="annualInterestRate" label="借款年利率" width="120" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="penaltyAnnualInterestRate" label="逾期罚息年利率" width="120" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="loanInterest" label="交易日借款利息" width="120" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="tradingBaseDate" label="交易基准日" width="120" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="transferType" label="是否转让" width="120" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="acquisitionCost" label="取得成本" width="120" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="valuationPrice" label="评估价格" width="120" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="transferPrice" label="转让价格" width="120" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="claimsProgress" label="债权转让进度" width="120" :render-header="renderHeader"></el-table-column>
-          <el-table-column prop="remarks" label="备注" width="120" :render-header="renderHeader"></el-table-column>
+          <el-table-column prop="id" label="借据号" width="200" :render-header="renderHeader" v-if="!form.id_show"></el-table-column>
+          <el-table-column prop="contractNo" label="借款合同号" width="200" :render-header="renderHeader" v-if="!form.contractNo_show"></el-table-column>
+          <el-table-column prop="assetPackageId" label="资产包ID" width="200" :render-header="renderHeader" v-if="!form.assetPackageId_show"></el-table-column>
+          <el-table-column prop="obligor" label="债务人" width="150" :render-header="renderHeader" v-if="!form.obligor_show"></el-table-column>
+          <el-table-column prop="region" label="所在镇区" width="150" :render-header="renderHeader" v-if="!form.region_show"></el-table-column>
+          <el-table-column prop="creditor" label="债权人" width="150" :render-header="renderHeader" v-if="!form.creditor_show"></el-table-column>
+          <el-table-column prop="originalCreditor" label="原债权人" width="150" :render-header="renderHeader" v-if="!form.originalCreditor_show"></el-table-column>
+          <el-table-column prop="claimsType" label="债权类别" width="150" :render-header="renderHeader" v-if="!form.claimsType_show"></el-table-column>
+          <el-table-column prop="loanCompensationDate" label="借款(代偿)日" width="100" :render-header="renderHeader" v-if="!form.loanCompensationDate_show"></el-table-column>
+          <el-table-column prop="loanCompensationDueDate" label="借款(代偿)到期日" width="120" :render-header="renderHeader" v-if="!form.loanCompensationDueDate_show"></el-table-column>
+          <el-table-column prop="principalOfLoan" label="交易日借款本金" width="120" :render-header="renderHeader" v-if="!form.principalOfLoan_show"></el-table-column>
+          <el-table-column prop="annualInterestRate" label="借款年利率" width="120" :render-header="renderHeader" v-if="!form.annualInterestRate_show"></el-table-column>
+          <el-table-column prop="penaltyAnnualInterestRate" label="逾期罚息年利率" width="120" :render-header="renderHeader" v-if="!form.penaltyAnnualInterestRate_show"></el-table-column>
+          <el-table-column prop="loanInterest" label="交易日借款利息" width="120" :render-header="renderHeader" v-if="!form.loanInterest_show"></el-table-column>
+          <el-table-column prop="tradingBaseDate" label="交易基准日" width="120" :render-header="renderHeader" v-if="!form.tradingBaseDate_show"></el-table-column>
+          <el-table-column prop="transferType" label="是否转让" width="120" :render-header="renderHeader" v-if="!form.transferType_show"></el-table-column>
+          <el-table-column prop="acquisitionCost" label="取得成本" width="120" :render-header="renderHeader" v-if="!form.acquisitionCost_show"></el-table-column>
+          <el-table-column prop="valuationPrice" label="评估价格" width="120" :render-header="renderHeader" v-if="!form.valuationPrice_show"></el-table-column>
+          <el-table-column prop="transferPrice" label="转让价格" width="120" :render-header="renderHeader" v-if="!form.transferPrice_show"></el-table-column>
+          <el-table-column prop="claimsProgress" label="债权转让进度" width="120" :render-header="renderHeader" v-if="!form.claimsProgress_show"></el-table-column>
+          <el-table-column prop="remarks" label="备注" width="120" :render-header="renderHeader" v-if="!form.remarks_show"></el-table-column>
           <el-table-column prop="operate" fixed="right" label="操作" width="100">
             <template slot-scope="scope">
               <el-button @click="creditDetail(scope.row)" type="text" size="small">查看</el-button>
@@ -306,180 +349,94 @@ export default {
   name: "creditMenu",
   data(){
     return{
+      form:{
+        id_show:false,
+        contractNo_show:false,
+        assetPackageId_show:false,
+        obligor_show:false,
+        region_show:false,
+        creditor_show:false,
+        originalCreditor_show:false,
+        claimsType_show:false,
+        loanCompensationDate_show:false,
+        loanCompensationDueDate_show:false,
+        principalOfLoan_show:false,
+        annualInterestRate_show:false,
+        penaltyAnnualInterestRate_show:false,
+        loanInterest_show:false,
+        tradingBaseDate_show:false,
+        transferType_show:false,
+        acquisitionCost_show:false,
+        valuationPrice_show:false,
+        transferPrice_show:false,
+        claimsProgress_show:false,
+        remarks_show:false
+      },
       form1:{
-        jjh_checked: false,
-        jjh:'',
-        hth_checked: false,
-        hth: '',
-        zcbID_checked: false,
-        zcbID: '',
-        zwr_checked:false,
-        zwr: '',
-        szzq_checked:false,
-        azzq: '',
-        zqr_checked:false,
-        zqr: '',
-        yzqr_checked:false,
-        yzqr: '',
-        zqlb_checked:false,
-        zqlb: '',
-        jkr_checked:false,
-        jkr: '',
-        jkdqr_checked:false,
-        jkdqr: '',
-        jyjzr_checked:false,
-        jyjzr: '',
-        zr_checked:false,
-        zr: '',
-        zrjd_checked:false,
-        zrjd: ''
+        id_checked: false,
+        id:'',
+        contractNo_checked: false,
+        contractNo: '',
+        assetPackageId_checked: false,
+        assetPackageId: '',
+        obligor_checked:false,
+        obligor: '',
+        region_checked:false,
+        region: '',
+        creditor_checked:false,
+        creditor: '',
+        originalCreditor_checked:false,
+        originalCreditor: '',
+        claimsType_checked:false,
+        claimsType: '',
+        loanCompensationDate_checked:false,
+        loanCompensationDate: '',
+        loanCompensationDueDate_checked:false,
+        loanCompensationDueDate: '',
+        tradingBaseDate_checked:false,
+        tradingBaseDate: '',
+        transferType_checked:false,
+        transferType: '',
+        claimsProgress_checked:false,
+        claimsProgress: ''
       },
       pickerOptions:[],
       input1:'',
       currentPage: 1,
       pagesize:10,
       totalsize:10,
-      tableData: [{
-      }],
-      filterItems:{
-      },
+      tableData: [],
+      filterItems:{},
       multipleSelection:[],
       new_value:[],
-      options1: [{
-        value: '云阳镇',
-        label: '云阳镇'
-      }, {
-        value: '开发区',
-        label: '开发区'
-      }, {
-        value: '新桥镇',
-        label: '新桥镇'
-      }, {
-        value: '后巷镇',
-        label: '后巷镇'
-      }, {
-        value: '界牌镇',
-        label: '界牌镇'
-      }, {
-        value: '陴城镇',
-        label: '陴城镇'
-      }, {
-        value: '访仙镇',
-        label: '访仙镇'
-      }, {
-        value: '吕城镇',
-        label: '吕城镇'
-      }, {
-        value: '陵口镇',
-        label: '陵口镇'
-      }, {
-        value: '珥陵镇',
-        label: '珥陵镇'
-      }, {
-        value: '导墅镇',
-        label: '导墅镇'
-      }, {
-        value: '皇堂镇',
-        label: '皇堂镇'
-      }, {
-        value: '延陵镇',
-        label: '延陵镇'
-      }],
-      options2:[{
-        value: '天惠投资',
-        label: '天惠投资'
-      }, {
-        value: '天晟投资',
-        label: '天晟投资'
-      }, {
-        value: '天工惠农小贷',
-        label: '天工惠农小贷'
-      }, {
-        value: '银润小贷',
-        label: '银润小贷'
-      }, {
-        value: '阳光企业',
-        label: '阳光企业'
-      }],
-      options3: [{
-        value: '丹阳工行',
-        label: '丹阳工行'
-      }, {
-        value: '丹阳农行',
-        label: '丹阳农行'
-      }, {
-        value: '丹阳中行',
-        label: '丹阳中行'
-      }, {
-        value: '丹阳建行',
-        label: '丹阳建行'
-      }, {
-        value: '丹阳交行',
-        label: '丹阳交行'
-      }, {
-        value: '丹阳农发行',
-        label: '丹阳农发行'
-      }, {
-        value: '丹阳农商行',
-        label: '丹阳农商行'
-      }, {
-        value: '丹阳江苏',
-        label: '丹阳江苏'
-      }, {
-        value: '丹阳保得',
-        label: '丹阳保得'
-      }, {
-        value: '丹阳华夏',
-        label: '丹阳华夏'
-      }, {
-        value: '丹阳民生',
-        label: '丹阳民生'
-      }, {
-        value: '丹阳浦发',
-        label: '丹阳浦发'
-      }, {
-        value: '丹阳招商',
-        label: '丹阳招商'
-      }, {
-        value: '丹阳中信',
-        label: '丹阳中信'
-      }, {
-        value: '丹阳兴业',
-        label: '丹阳兴业'
-      }, {
-        value: '丹阳南京',
-        label: '丹阳南京'
-      }, {
-        value: '丹阳紫金农商',
-        label: '丹阳紫金农商'
-      }, {
-        value: '丹阳广发',
-        label: '丹阳广发'
-      }, {
-        value: '丹阳储蓄',
-        label: '丹阳储蓄'
-      }],
-      options4: [{
-        value: '2',
-        label: '资产包'
-      }, {
-        value: '1',
-        label: '小贷公司'
-      }],
-      options5: [{
-        value: '1',
-        label: '是'
-      }, {
-        value: '2',
-        label: '否'
-      }],
-      options6: [{
-        value: '1',
-        label: '转让中'
-      }, {
-        value: '2',
-        label: '转让完成'
-      }],
+      options1: [
+        {value: '云阳镇', label: '云阳镇'}, {value: '开发区', label: '开发区'},
+        {value: '新桥镇', label: '新桥镇'}, {value: '后巷镇', label: '后巷镇'},
+        {value: '界牌镇', label: '界牌镇'}, {value: '陴城镇', label: '陴城镇'},
+        {value: '访仙镇', label: '访仙镇'}, {value: '吕城镇', label: '吕城镇'},
+        {value: '陵口镇', label: '陵口镇'}, {value: '珥陵镇', label: '珥陵镇'},
+        {value: '导墅镇', label: '导墅镇'}, {value: '皇堂镇', label: '皇堂镇'},
+        {value: '延陵镇', label: '延陵镇'}],
+      options2:[
+        {value: '天惠投资', label: '天惠投资'},
+        {value: '天晟投资', label: '天晟投资'},
+        {value: '天工惠农小贷', label: '天工惠农小贷'},
+        {value: '银润小贷', label: '银润小贷'},
+        {value: '阳光企业', label: '阳光企业'}],
+      options3: [
+        {value: '丹阳工行', label: '丹阳工行'}, {value: '丹阳农行', label: '丹阳农行'},
+        {value: '丹阳中行', label: '丹阳中行'}, {value: '丹阳建行', label: '丹阳建行'},
+        {value: '丹阳交行', label: '丹阳交行'}, {value: '丹阳农发行', label: '丹阳农发行'},
+        {value: '丹阳农商行', label: '丹阳农商行'}, {value: '丹阳江苏', label: '丹阳江苏'},
+        {value: '丹阳保得', label: '丹阳保得'}, {value: '丹阳华夏', label: '丹阳华夏'},
+        {value: '丹阳民生', label: '丹阳民生'}, {value: '丹阳浦发', label: '丹阳浦发'},
+        {value: '丹阳招商', label: '丹阳招商'}, {value: '丹阳中信', label: '丹阳中信'},
+        {value: '丹阳兴业', label: '丹阳兴业'}, {value: '丹阳南京', label: '丹阳南京'},
+        {value: '丹阳紫金农商', label: '丹阳紫金农商'}, {value: '丹阳广发', label: '丹阳广发'},
+        {value: '丹阳储蓄', label: '丹阳储蓄'}],
+      options4: [{value: '2', label: '资产包'}, {value: '1', label: '小贷公司'}],
+      options5: [{value: '1', label: '是'}, {value: '2', label: '否'}],
+      options6: [{value: '1', label: '转让中'}, {value: '2', label: '转让完成'}],
       new_options: [{
         value: 'creditBasic',
         label: '债权基本信息',
@@ -537,7 +494,7 @@ export default {
     reset(){
       this.form1 = this.$options.data().form1
     },
-    submit(){
+    screen(){
       alert("submit")
     },
     renderHeader(h, { column }) {

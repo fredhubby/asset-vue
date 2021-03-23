@@ -199,120 +199,31 @@ export default {
   data() {
     return {
       activeIndex: '1',
-      options: [{
-        value: '天惠投资',
-        label: '天惠投资'
-      }, {
-        value: '天晟投资',
-        label: '天晟投资'
-      }, {
-        value: '天工惠农小贷',
-        label: '天工惠农小贷'
-      }, {
-        value: '银润小贷',
-        label: '银润小贷'
-      }, {
-        value: '阳光企业',
-        label: '阳光企业'
-      }],
-      options1: [{
-        value: '丹阳工行',
-        label: '丹阳工行'
-      }, {
-        value: '丹阳农行',
-        label: '丹阳农行'
-      }, {
-        value: '丹阳中行',
-        label: '丹阳中行'
-      }, {
-        value: '丹阳建行',
-        label: '丹阳建行'
-      }, {
-        value: '丹阳交行',
-        label: '丹阳交行'
-      }, {
-        value: '丹阳农发行',
-        label: '丹阳农发行'
-      }, {
-        value: '丹阳农商行',
-        label: '丹阳农商行'
-      }, {
-        value: '丹阳江苏',
-        label: '丹阳江苏'
-      }, {
-        value: '丹阳保得',
-        label: '丹阳保得'
-      }, {
-        value: '丹阳华夏',
-        label: '丹阳华夏'
-      }, {
-        value: '丹阳民生',
-        label: '丹阳民生'
-      }, {
-        value: '丹阳浦发',
-        label: '丹阳浦发'
-      }, {
-        value: '丹阳招商',
-        label: '丹阳招商'
-      }, {
-        value: '丹阳中信',
-        label: '丹阳中信'
-      }, {
-        value: '丹阳兴业',
-        label: '丹阳兴业'
-      }, {
-        value: '丹阳南京',
-        label: '丹阳南京'
-      }, {
-        value: '丹阳紫金农商',
-        label: '丹阳紫金农商'
-      }, {
-        value: '丹阳广发',
-        label: '丹阳广发'
-      }, {
-        value: '丹阳储蓄',
-        label: '丹阳储蓄'
-      }],
-      options2: [{
-        value: '云阳镇',
-        label: '云阳镇'
-      }, {
-        value: '开发区',
-        label: '开发区'
-      }, {
-        value: '新桥镇',
-        label: '新桥镇'
-      }, {
-        value: '后巷镇',
-        label: '后巷镇'
-      }, {
-        value: '界牌镇',
-        label: '界牌镇'
-      }, {
-        value: '陴城镇',
-        label: '陴城镇'
-      }, {
-        value: '访仙镇',
-        label: '访仙镇'
-      }, {
-        value: '吕城镇',
-        label: '吕城镇'
-      }, {
-        value: '陵口镇',
-        label: '陵口镇'
-      }, {
-        value: '珥陵镇',
-        label: '珥陵镇'
-      }, {
-        value: '导墅镇',
-        label: '导墅镇'
-      }, {
-        value: '皇堂镇',
-        label: '皇堂镇'
-      }, {
-        value: '延陵镇',
-        label: '延陵镇'
-      }],
+      options: [
+        {value: '天惠投资', label: '天惠投资'},
+        {value: '天晟投资', label: '天晟投资'},
+        {value: '天工惠农小贷', label: '天工惠农小贷'},
+        {value: '银润小贷', label: '银润小贷'},
+        {value: '阳光企业', label: '阳光企业'}],
+      options1: [
+        {value: '丹阳工行', label: '丹阳工行'}, {value: '丹阳农行', label: '丹阳农行'},
+        {value: '丹阳中行', label: '丹阳中行'}, {value: '丹阳建行', label: '丹阳建行'},
+        {value: '丹阳交行', label: '丹阳交行'}, {value: '丹阳农发行', label: '丹阳农发行'},
+        {value: '丹阳农商行', label: '丹阳农商行'}, {value: '丹阳江苏', label: '丹阳江苏'},
+        {value: '丹阳保得', label: '丹阳保得'}, {value: '丹阳华夏', label: '丹阳华夏'},
+        {value: '丹阳民生', label: '丹阳民生'}, {value: '丹阳浦发', label: '丹阳浦发'},
+        {value: '丹阳招商', label: '丹阳招商'}, {value: '丹阳中信', label: '丹阳中信'},
+        {value: '丹阳兴业', label: '丹阳兴业'}, {value: '丹阳南京', label: '丹阳南京'},
+        {value: '丹阳紫金农商', label: '丹阳紫金农商'}, {value: '丹阳广发', label: '丹阳广发'},
+        {value: '丹阳储蓄', label: '丹阳储蓄'}],
+      options2: [
+        {value: '云阳镇', label: '云阳镇'}, {value: '开发区', label: '开发区'},
+        {value: '新桥镇', label: '新桥镇'}, {value: '后巷镇', label: '后巷镇'},
+        {value: '界牌镇', label: '界牌镇'}, {value: '陴城镇', label: '陴城镇'},
+        {value: '访仙镇', label: '访仙镇'}, {value: '吕城镇', label: '吕城镇'},
+        {value: '陵口镇', label: '陵口镇'}, {value: '珥陵镇', label: '珥陵镇'},
+        {value: '导墅镇', label: '导墅镇'}, {value: '皇堂镇', label: '皇堂镇'},
+        {value: '延陵镇', label: '延陵镇'}],
       options3: [{
         value: '2',
         label: '资产包'

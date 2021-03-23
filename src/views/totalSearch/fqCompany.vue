@@ -9,10 +9,36 @@
       <el-col :span="16">
         <div class="grid-content1">
           <el-button type="primary" @click="addFqCompany">新增分期还款企业</el-button>
-          <el-button>数据导出</el-button>
-          <el-button>打印</el-button>
-          <el-button>删除</el-button>
-          <el-button>隐藏列</el-button>
+          <el-button type="success">数据导出</el-button>
+<!--          <el-button>打印</el-button>-->
+          <el-popconfirm
+              title="确定删除此条数据？"
+              @confirm="">
+            <el-button slot="reference" type="danger">删除</el-button>
+          </el-popconfirm>
+
+          <el-popover
+              width="600"
+              placement="down"
+              trigger="click">
+            <el-form ref="form1" :model="form1">
+              <el-form-item>
+                <el-row :gutter="20" type="flex" class="row-bg">
+                  <el-col :span="20" offset="1"><el-checkbox v-model="form1.obligor_show">债务人</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form1.repayPrincipal_show">应还款本金</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form1.repayDate_show">还款期限</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form1.keyPerson_show">关键人</el-checkbox></el-col>
+                </el-row>
+                <el-row :gutter="20" type="flex" class="row-bg">
+                  <el-col :span="20" offset="1"><el-checkbox v-model="form1.creditor_show">债权人</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form1.repayType_show">还款状态</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form1.remarks_show">备注</el-checkbox></el-col>
+                </el-row>
+              </el-form-item>
+            </el-form>
+            <el-button slot="reference" type="warning">隐藏列<i class="el-icon-caret-bottom"></i></el-button>
+          </el-popover>
+
           <el-popover
               placement="down"
               trigger="click">
@@ -70,7 +96,7 @@
               <el-button @click="reset('form1')">清空</el-button>
               <el-button type="primary" @click="submit">筛选</el-button>
             </el-form>
-            <el-button slot="reference">筛选<i class="el-icon-caret-bottom"></i></el-button>
+            <el-button slot="reference" type="success">筛选<i class="el-icon-caret-bottom"></i></el-button>
           </el-popover>
         </div>
       </el-col>
@@ -91,13 +117,13 @@
         <el-table :data="tableData" border height="500" style="width: 100%" class="el-table"
                   ref="filterTable" @selection-change="handleSelectionChange" >
           <el-table-column type="selection" width="50"></el-table-column>
-          <el-table-column prop="zwr" label="债务人" width="200"></el-table-column>
-          <el-table-column prop="yhkbj" sortable label="应还款本金" width="250"></el-table-column>
-          <el-table-column prop="hkqx" sortable label="还款期限" width="250"></el-table-column>
-          <el-table-column prop="gjr" label="关键人" width="200"></el-table-column>
-          <el-table-column prop="zqr" label="债权人" width="200"></el-table-column>
-          <el-table-column prop="hkzt" label="还款状态" width="200"></el-table-column>
-          <el-table-column prop="bz" label="备注" width="300"></el-table-column>
+          <el-table-column prop="obligor" label="债务人" width="200" v-if="!form1.obligor_show"></el-table-column>
+          <el-table-column prop="repayPrincipal" sortable label="应还款本金" width="250" v-if="!form1.repayPrincipal_show"></el-table-column>
+          <el-table-column prop="repayDate" sortable label="还款期限" width="250" v-if="!form1.repayDate_show"></el-table-column>
+          <el-table-column prop="keyPerson" label="关键人" width="200" v-if="!form1.keyPerson_show"></el-table-column>
+          <el-table-column prop="creditor" label="债权人" width="200" v-if="!form1.creditor_show"></el-table-column>
+          <el-table-column prop="repayType" label="还款状态" width="200" v-if="!form1.repayType_show"></el-table-column>
+          <el-table-column prop="remarks" label="备注" width="300" v-if="!form1.remarks_show"></el-table-column>
           <el-table-column prop="operate" fixed="right" label="操作" width="100">
             详情
           </el-table-column>
@@ -136,7 +162,14 @@ export default {
         gjr_checked:false,
         gjr:'',
         hkzt_checked:false,
-        hkzt:''
+        hkzt:'',
+        obligor_show:false,
+        repayPrincipal_show:false,
+        repayDate_show:false,
+        keyPerson_show:false,
+        creditor_show:false,
+        repayType_show:false,
+        remarks_show:false
       },
       options1:[{
         value: '天惠投资',

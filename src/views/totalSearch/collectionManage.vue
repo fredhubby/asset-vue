@@ -9,33 +9,58 @@
       <el-col :span="16">
         <div class="grid-content1">
           <el-button type="primary" @click="addCollection">新增催收记录</el-button>
-          <el-button>数据导出</el-button>
-          <el-button>打印</el-button>
-          <el-button>删除</el-button>
-          <el-button>隐藏列</el-button>
+          <el-button type="success">数据导出</el-button>
+<!--          <el-button>打印</el-button>-->
+          <el-popconfirm
+              title="确定删除此条数据？"
+              @confirm="">
+            <el-button slot="reference" type="danger">删除</el-button>
+          </el-popconfirm>
+
+          <el-popover
+              width="600"
+              placement="down"
+              trigger="click">
+            <el-form ref="form1" :model="form1">
+              <el-form-item>
+                <el-row :gutter="20" type="flex" class="row-bg">
+                  <el-col :span="20" offset="1"><el-checkbox v-model="form1.id_show">借据号</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form1.obligor_show">债务人</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form1.creditor_show">债权人</el-checkbox></el-col>
+                </el-row>
+                <el-row :gutter="20" type="flex" class="row-bg">
+                  <el-col :span="20" offset="1"><el-checkbox v-model="form1.originalCreditor_show">原债权人</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form1.latestUrgingDate_show">还款状态</el-checkbox></el-col>
+                  <el-col :span="20" ><el-checkbox v-model="form1.remarks_show">备注</el-checkbox></el-col>
+                </el-row>
+              </el-form-item>
+            </el-form>
+            <el-button slot="reference" type="warning">隐藏列<i class="el-icon-caret-bottom"></i></el-button>
+          </el-popover>
+
           <el-popover
               placement="down"
               trigger="click">
             <el-form ref="form1" :model="form1">
               <el-row :gutter="20" type="flex" class="row-bg">
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.jjh_checked">借据号</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.id_checked">借据号</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.jjh" clearable :disabled="Boolean(!form1.jjh_checked)"></el-input></el-col>
+                  <el-col :span="30"><el-input v-model="form1.id" clearable :disabled="Boolean(!form1.id_checked)"></el-input></el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.zwr_checked">债务人</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.obligor_checked">债务人</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.zwr" clearable :disabled="Boolean(!form1.zwr_checked)"></el-input></el-col>
+                  <el-col :span="30"><el-input v-model="form1.obligor" clearable :disabled="Boolean(!form1.obligor_checked)"></el-input></el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.zqr_checked">债权人</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.creditor_checked">债权人</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
                   <el-col :span="30">
-                    <el-select v-model="form1.zqr" clearable :disabled="Boolean(!form1.zqr_checked)">
+                    <el-select v-model="form1.creditor" clearable :disabled="Boolean(!form1.creditor_checked)">
                       <el-option
                           v-for="item in options1"
                           :key="item.value"
@@ -48,11 +73,11 @@
               </el-row>
               <el-row :gutter="20" type="flex" class="row-bg">
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.yzqr_checked">原债权人</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.originalCreditor_checked">原债权人</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
                   <el-col :span="30">
-                    <el-select v-model="form1.yzqr" clearable :disabled="Boolean(!form1.yzqr_checked)">
+                    <el-select v-model="form1.originalCreditor" clearable :disabled="Boolean(!form1.originalCreditor_checked)">
                       <el-option
                           v-for="item in options2"
                           :key="item.value"
@@ -63,14 +88,14 @@
                   </el-col>
                 </el-form-item>
                 <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.zxcsggr_checked">最新催收公告日</el-checkbox></el-col>
+                  <el-col :span="2"><el-checkbox v-model="form1.latestUrgingDate_checked">最新催收公告日</el-checkbox></el-col>
                 </el-form-item>
                 <el-form-item>
                   <el-col :span="30">
                     <el-date-picker
-                        v-model="form1.zxcsggr"
+                        v-model="form1.latestUrgingDate"
                         type="daterange"
-                        :disabled="Boolean(!form1.zxcsggr_checked)"
+                        :disabled="Boolean(!form1.latestUrgingDate_checked)"
                         range-separator="至"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期">
@@ -82,7 +107,7 @@
               <el-button @click="reset('form1')">清空</el-button>
               <el-button type="primary" @click="submit">筛选</el-button>
             </el-form>
-            <el-button slot="reference">筛选<i class="el-icon-caret-bottom"></i></el-button>
+            <el-button slot="reference" type="success">筛选<i class="el-icon-caret-bottom"></i></el-button>
           </el-popover>
         </div>
       </el-col>
@@ -103,15 +128,12 @@
         <el-table :data="tableData" border height="500" style="width: 100%" class="el-table"
                   ref="filterTable" @selection-change="handleSelectionChange" >
           <el-table-column type="selection" width="50"></el-table-column>
-          <el-table-column prop="jjh" sortable label="借据号" width="280"></el-table-column>
-          <el-table-column prop="zwr" label="债务人" width="200"></el-table-column>
-          <el-table-column prop="zqr" label="债权人" width="200"></el-table-column>
-<!--          :filters="[{text: '天惠投资', value: '天惠投资'}, {text: '天晟投资', value: '天晟投资'},-->
-<!--          {text: '天工惠农小贷', value: '天工惠农小贷'}, {text: '银润小贷', value: '银润小贷'}, {text: '阳光企业', value: '阳光企业'}]"-->
-          <el-table-column prop="yzqr" label="原债权人" width="250"></el-table-column>
-          <el-table-column prop="zxcsggr" sortable label="最新催收公告日" width="200">
-          </el-table-column>
-          <el-table-column prop="bz" label="备注" width="300"></el-table-column>
+          <el-table-column prop="id" sortable label="借据号" width="280" v-if="!form1.id_show"></el-table-column>
+          <el-table-column prop="obligor" label="债务人" width="200" v-if="!form1.obligor_show"></el-table-column>
+          <el-table-column prop="creditor" label="债权人" width="200" v-if="!form1.creditor_show"></el-table-column>
+          <el-table-column prop="originalCreditor" label="原债权人" width="250" v-if="!form1.originalCreditor_show"></el-table-column>
+          <el-table-column prop="latestUrgingDate" sortable label="最新催收公告日" width="200" v-if="!form1.latestUrgingDate_show"></el-table-column>
+          <el-table-column prop="remarks" label="备注" width="300" v-if="!form1.remarks_show"></el-table-column>
           <el-table-column prop="operate" fixed="right" label="操作" width="100">
             详情
           </el-table-column>
@@ -139,16 +161,22 @@ export default {
       input1:'',
       currentPage: 1,
       form1:{
-        jjh_checked:false,
-        jjh:'',
-        zwr_checked:false,
-        zwr:'',
-        zqr_checked:false,
-        zqr:'',
-        yzqr_checked:false,
-        yzqr:'',
-        zxcsggr_checked:false,
-        zxcsggr:''
+        id_checked:false,
+        id:'',
+        obligor_checked:false,
+        obligor:'',
+        creditor_checked:false,
+        creditor:'',
+        originalCreditor_checked:false,
+        originalCreditor:'',
+        latestUrgingDate_checked:false,
+        latestUrgingDate:'',
+        id_show:false,
+        obligor_show:false,
+        creditor_show:false,
+        originalCreditor_show:false,
+        latestUrgingDate_show:false,
+        remarks_show:false,
       },
       options1:[{
         value: '天惠投资',
