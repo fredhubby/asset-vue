@@ -21,6 +21,7 @@
 // import HelloWorld from '@/components/HelloWorld.vue'
 
 import axios from "axios";
+import {default as api} from "@/utils/api";
 
 export default {
   name: 'Login',
@@ -38,9 +39,9 @@ export default {
             trigger: 'blur'
           },
           {
-            min: 3,
+            min: 1,
             max: 20,
-            message: '长度在 3 到 20 个字符',
+            message: '长度在 1 到 20 个字符',
             trigger: 'blur'
           }
         ],
@@ -64,35 +65,57 @@ export default {
     onSubmit (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // window.sessionStorage.setItem('isLogin', 'true')
-          // this.$store.dispatch('asyncUpdateUser', { name: this.form.name })
-          // 页面跳转
-          // this.$router.push('/Main')
-          // this.$router.push({
-          //   name: 'Main',
-          //   params: { name: this.form.name }
-          // })
 
-          axios.post('', {
-            name: '',
-            password: ''
-          })
-              .then(function (res) {
-                console.log(res);
+          //     axios.post('', {
+          //       name: '',
+          //       password: ''
+          //     })
+          //         .then(function (res) {
+          //           console.log(res);
+          //         })
+          //         .catch(function (err) {
+          //           console.log(err);
+          //         });
+          //
+          //     axios.get('https://autumnfish.cn/api/joke/list?num=4')
+          //         .then(function (response) {
+          //           console.log(response.data.jokes[0])
+          //         }).catch(function (error) {
+          //           console.log(error);
+          //         });
+          //     this.$router.push({ name: 'Main' , replace: true})
+          //   } else {
+          //     alert('error submit!!')
+          //     return false}
+
+          var _this = this;
+          api({
+            url: "/user/userLogin",
+            method: "get",
+            params:{
+              username:_this.form.name,
+              password:_this.form.password
+            }
+          }).then(data => {
+            console.log(data);
+            if(data.data.datas==='用户名不存在或者密码错误！'){
+              this.$message({
+                type:"error",
+                message:'用户名不存在或者密码错误！'
               })
-              .catch(function (err) {
-                console.log(err);
-              });
-
-          axios.get('https://autumnfish.cn/api/joke/list?num=4')
-              .then(function (response) {
-                console.log(response.data.jokes[0])
-              }).catch(function (error) {
-                console.log(error);
-              });
-          this.$router.push({ name: 'Main' , replace: true})
-        } else {
-          alert('error submit!!')
+            }else {
+              this.$message({type:"success", message:"登录成功！"});
+              window.localStorage.setItem('isLogin','true');
+              this.$store.dispatch("asyncUpdateUser",{name:_this.form.name})
+              this.$store.dispatch("asyncUpdateLogin", {isLogin:true})
+              this.$router.push({ name: 'timeRemider' , replace: true, params:{name:_this.form.name}})
+            }
+          }).catch(err => {
+            console.log(err);
+          })
+        }
+        else {
+          alert('登录失败!!')
           return false
         }
       })

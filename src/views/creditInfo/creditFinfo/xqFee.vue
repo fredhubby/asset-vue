@@ -1,14 +1,15 @@
 <template>
   <div>
     <el-breadcrumb separator="/">
-      <el-breadcrumb-item to="/Main"><i class="el-icon-s-home"></i></el-breadcrumb-item>
+      <el-breadcrumb-item to="/timeRemider"><i class="el-icon-s-home"></i></el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">债权信息</el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">债权费用信息</el-breadcrumb-item>
     </el-breadcrumb>
     <el-row class="el-row1">
       <el-col :span="24">
         <div class="grid-content">
-          <el-button @click="edit">{{edit_label}}</el-button>
+          <el-button type="primary" @click="newFee">新增费用</el-button>
+          <el-button @click="edit" v-if="form1.feeList.length>0" type="primary">{{edit_label}}</el-button>
           <el-popconfirm
               title="确定提交？"
               style="margin-right: 40px;margin-left: 20px"
@@ -52,13 +53,13 @@
       </el-menu-item>
     </el-menu>
 
-    <el-form style="margin-top: 15px" ref="form1" :model="form1" label-width="130px">
+    <el-form style="margin-top: 15px" ref="form1" :model="form1" label-width="130px" :rules="rules">
       <div
           v-for="(fee,index1) in form1.feeList"
           :key="fee.key">
         <el-row :gutter="60" style="margin-top: 40px">
           <el-col :span="9" :offset="1">
-            <el-form-item label="费用类型：" class="form_item">
+            <el-form-item label="费用类型：" class="form_item" :prop="'feeList.'+index1+'.feeType'" :rules="{required:true,message:'不能为空',trigger:['blur','change']}">
               <el-select v-model="fee.feeType" clearable placeholder="请选择" style="width: 100%" :disabled="!allow_edit">
                 <el-option
                     v-for="item in fee_options"
@@ -71,7 +72,11 @@
           </el-col>
 
           <el-col :span="9">
-            <el-form-item label="费用:" class="form_item">
+            <el-form-item
+                label="费用:"
+                class="form_item"
+                :prop="'feeList.'+index1+'.feeValue'"
+                :rules="[{required:true,message:'不能为空',trigger:['blur','change']},{pattern:/^\d+(\.\d?\d?)?$/,message:'必须为数字(最多两位小数)',trigger:['change','blur']}]">
               <el-input v-model="fee.feeValue" clearable :disabled="!allow_edit"></el-input>
             </el-form-item>
           </el-col>
@@ -103,15 +108,19 @@
           </el-col>
         </el-row>
 
+
         <span style="font-family: 黑体;font-size: 18px">借据号</span>
         <el-form-item
             v-for="(iou, index2) in fee.iouList"
-            :label="'借据号' + (index2+1)"
-            :key="iou.key"
+            :label="'借据号' + index2"
+            :key="iou.key+'_index1'"
+            :prop="'feeList.'+index1+'.iouList.'+index2+'.value'"
+            :rules="{required:true,message:'不能为空',trigger:['blur','change']}"
             style="margin-top: 20px;margin-left: 200px">
-          <el-input v-model="iou.value" style="width: 30%" :disabled="iou.isorigin"></el-input>
+          <el-input v-model="iou.value" style="width: 30%" :disabled="iou.isorigin" :key="'input_'+index1"></el-input>
 
           <el-popconfirm
+              :key="'delete_confirm_'+index1"
               v-if="iou.isorigin && !allow_edit"
               :title="Boolean(fee.iouList.length>1)?'确定删除该借据？':'确定删除最后一个借据？此删除将删除整个费用'"
               @confirm="removeIou(iou,index1)"
@@ -124,6 +133,7 @@
             </el-button>
           </el-popconfirm>
           <el-button
+              :key="'delete_'+index1"
               v-if="!iou.isorigin && !allow_edit"
               @click.prevent="removeIou(iou,index1)"
               icon="el-icon-delete"
@@ -133,8 +143,9 @@
           </el-button>
         </el-form-item>
         <el-form-item style="margin-left: 200px" v-if="!allow_edit">
-          <el-button type="primary" @click="addIou(index1)">新增借据</el-button>
+          <el-button type="primary" :id="'addButton_'+index1" @click="addIou(index1)" :key="'add_'+index1">新增借据</el-button>
           <el-popconfirm
+              :key="'add_submit_'+index1"
               v-if="fee.iouList_length < fee.iouList.length"
               title="确定提交新增的借据？"
               @confirm="addIouSubmit(index1)">
@@ -145,11 +156,14 @@
               提交
             </el-button>
           </el-popconfirm>
-          <!--          <el-button v-if="fee.iouList_length < fee.iouList.length" type="primary" @click="addIouSubmit(index1)">提交</el-button>-->
+<!--          <el-button v-if="fee.iouList_length < fee.iouList.length" type="primary" @click="addIouSubmit(index1)">提交</el-button>-->
         </el-form-item>
         <el-divider></el-divider>
       </div>
     </el-form>
+
+
+
   </div>
 </template>
 
@@ -162,6 +176,9 @@ export default {
     return{
       activeIndex: '3',
       form1:{feeList:[]},
+      rules:{
+
+      },
       fee_options:[
         {value:'0', label:'受让前诉讼费'},
         {value:'1', label:'受让前保全费'},
@@ -183,6 +200,7 @@ export default {
   },
   created() {
     var _this = this;
+    this.query_iou = this.$route.query.iou.replace(/^\s+|\s+$/g,"");
     api({
       url: "/Fee/getFee",
       method: "get",
@@ -191,8 +209,9 @@ export default {
       }
     }).then(data => {
       console.log(data)
-      this.origin_form_data = data.data.datas;
+      // this.origin_form_data = data.data.datas;
       this.jsondata2form(data.data.datas)
+      this.origin_form_data = JSON.parse(JSON.stringify(this.form1))
     }).catch(err => {
       console.log(err);
     })
@@ -206,10 +225,12 @@ export default {
       //如果是允许编辑，即是点击放弃修改
       if(this.allow_edit){
         this.allow_edit=false;
-        this.jsondata2form(this.origin_form_data);
+        // this.jsondata2form(this.origin_form_data);
+        this.form1 = JSON.parse(JSON.stringify(this.origin_form_data))
         this.edit_label='编辑';
       }
       else{
+        this.form1 = JSON.parse(JSON.stringify(this.origin_form_data))
         this.allow_edit=true;
         this.edit_label='放弃修改';
       }
@@ -236,7 +257,7 @@ export default {
           {name:'postAssignmentOtherFee',value:data[i].postAssignmentOtherFee,label:'9'},
           {name:'debtPayment',value:data[i].debtPayment,label:'10'}]
         for(let j=0;j<feeTypeIndex.length;j++){
-          if(data[i][feeTypeIndex[j].name] !== null){
+          if(data[i][feeTypeIndex[j].name] !== null && data[i][feeTypeIndex[j].name] !== 0){
             let fee = {key:this.getTempKey(),feeId:data[i].feeId, feeType:feeTypeIndex[j].label,feeValue:feeTypeIndex[j].value,paidDate:data[i].paidDate,iouList:iouList,iouList_length:iouList.length};
             this.form1.feeList.push(fee);
           }
@@ -244,7 +265,7 @@ export default {
       }
     },
     removeIou(iou,index){
-      //如果删除的是原有的借据，需要调用删除接口，否则只是在界面上删除
+      //如果删除的是原有的借据，徐亚调用删除接口，否则只是在界面上删除
       if(iou.isorigin){
         api({
           url: "/Fee/deleteFeeByIouId",
@@ -266,86 +287,123 @@ export default {
       }
     },
     addIou(index){
+
       this.form1.feeList[index].iouList.push({key:this.getTempKey(),value:'', isorigin:false})
+      console.log(this.form1.feeList)
     },
     addIouSubmit(index){
-      let send_data = [];
-      let fee = {'0':null,'1':null,'2':null,'3':null,'4':null,'5':null,'6':null,'7':null,'8':null,'9':null,'10':null};
-      fee[this.form1.feeList[index].feeType] = this.form1.feeList[index].feeValue;
-      for(let i=0;i<this.form1.feeList[index].iouList.length;i++){
-        if(!this.form1.feeList[index].iouList[i].isorigin){
-          send_data.push({
-            iouId:this.form1.feeList[index].iouList[i].value,
-            feeId:this.form1.feeList[index].feeId,
-            preAssignmentExecutionFee: fee['2'],
-            preAssignmentLitigationFee: fee['0'],
-            preAssignmentPreservationFee: fee['1'],
-            preAssignmentOtherFee: fee['4'],
-            preAssignmentAgencyFee:fee['3'],
-            postAssignmentExecutionFee: fee['7'],
-            postAssignmentLitigationFee: fee['5'],
-            postAssignmentPreservationFee: fee['6'],
-            postAssignmentOtherFee: fee['9'],
-            postAssignmentAgencyFee:fee['8'],
-            debtPayment: fee['10'],
-            debtPaymentDate: null,
-            paidDate: this.form1.feeList[index].paidDate,
-            deleteFlag: 0
+      this.$refs['form1'].validate((valid) => {
+        if(valid){
+          let send_data = [];
+          let fee = {'0':null,'1':null,'2':null,'3':null,'4':null,'5':null,'6':null,'7':null,'8':null,'9':null,'10':null};
+          fee[this.form1.feeList[index].feeType] = this.form1.feeList[index].feeValue;
+          for(let i=0;i<this.form1.feeList[index].iouList.length;i++){
+            if(!this.form1.feeList[index].iouList[i].isorigin){
+              send_data.push({
+                iouId:this.form1.feeList[index].iouList[i].value,
+                feeId:this.form1.feeList[index].feeId,
+                preAssignmentExecutionFee: fee['2'],
+                preAssignmentLitigationFee: fee['0'],
+                preAssignmentPreservationFee: fee['1'],
+                preAssignmentOtherFee: fee['4'],
+                preAssignmentAgencyFee:fee['3'],
+                postAssignmentExecutionFee: fee['7'],
+                postAssignmentLitigationFee: fee['5'],
+                postAssignmentPreservationFee: fee['6'],
+                postAssignmentOtherFee: fee['9'],
+                postAssignmentAgencyFee:fee['8'],
+                debtPayment: fee['10'],
+                debtPaymentDate: null,
+                paidDate: this.form1.feeList[index].paidDate,
+                deleteFlag: 0
+              })
+            }
+          }
+          api({
+            url: "/Fee/addFeeByIouId",
+            method: "post",
+            data:send_data
+          }).then(data => {
+            console.log(data);
+            if(data.data.success){
+              location.reload();
+            }
+            else{
+              this.$message(data.data.msg)
+            }
+
+          }).catch(err => {
+            console.log(err);
           })
         }
-      }
-      // console.log(send_data)
-      api({
-        url: "/Fee/addFeeByIouId",
-        method: "post",
-        data:send_data
-      }).then(data => {
-        console.log(data);
-        location.reload();
-      }).catch(err => {
-        console.log(err);
+        else{
+          console.log('err submit')
+          return false;
+        }
       })
+
 
     },
     submit(){
-      var _this = this;
-      let send_data = [];
-      for(let i=0;i<this.form1.feeList.length;i++){
-        let fee = {'0':null,'1':null,'2':null,'3':null,'4':null,'5':null,'6':null,'7':null,'8':null,'9':null,'10':null};
-        fee[this.form1.feeList[i].feeType] = this.form1.feeList[i].feeValue;
-        let iouList = []
-        for(let j=0;j<this.form1.feeList[i].iouList.length;j++){
-          iouList.push(this.form1.feeList[i].iouList[j].value);
+      let isChange = false;
+      this.origin_form_data.feeList.forEach((value,index) => {
+        for(let prop in value){
+          if(prop !== 'key' && prop !== 'iouList'){
+            if(String(value[prop]) !== String(this.form1.feeList[index][prop])){
+              isChange = true;
+            }
+          }
         }
-        send_data.push({
-          feeId:this.form1.feeList[i].feeId,
-          preAssignmentExecutionFee: fee['2'],
-          preAssignmentLitigationFee: fee['0'],
-          preAssignmentPreservationFee: fee['1'],
-          preAssignmentOtherFee: fee['4'],
-          preAssignmentAgencyFee:fee['3'],
-          postAssignmentExecutionFee: fee['7'],
-          postAssignmentLitigationFee: fee['5'],
-          postAssignmentPreservationFee: fee['6'],
-          postAssignmentOtherFee: fee['9'],
-          postAssignmentAgencyFee:fee['8'],
-          debtPayment: fee['10'],
-          debtPaymentDate: null,
-          paidDate: this.form1.feeList[i].paidDate,
-          iouIdList:iouList,
-          deleteFlag: 0}
-        )
-      }
-      console.log(send_data);
-      api({
-        url: "/Fee/updateFee",
-        method: "post",
-        data:send_data
-      }).then(data => {
-        console.log(data);
-        location.reload();
-      }).catch(err => {
-        console.log(err);
+      })
+      this.$refs['form1'].validate((valid) => {
+        if(valid && isChange){
+          var _this = this;
+          let send_data = [];
+          for(let i=0;i<this.form1.feeList.length;i++){
+            let fee = {'0':null,'1':null,'2':null,'3':null,'4':null,'5':null,'6':null,'7':null,'8':null,'9':null,'10':null};
+            fee[this.form1.feeList[i].feeType] = this.form1.feeList[i].feeValue;
+            let iouList = []
+            for(let j=0;j<this.form1.feeList[i].iouList.length;j++){
+              iouList.push(this.form1.feeList[i].iouList[j].value);
+            }
+            send_data.push({
+              feeId:this.form1.feeList[i].feeId,
+              preAssignmentExecutionFee: fee['2'],
+              preAssignmentLitigationFee: fee['0'],
+              preAssignmentPreservationFee: fee['1'],
+              preAssignmentOtherFee: fee['4'],
+              preAssignmentAgencyFee:fee['3'],
+              postAssignmentExecutionFee: fee['7'],
+              postAssignmentLitigationFee: fee['5'],
+              postAssignmentPreservationFee: fee['6'],
+              postAssignmentOtherFee: fee['9'],
+              postAssignmentAgencyFee:fee['8'],
+              debtPayment: fee['10'],
+              debtPaymentDate: null,
+              paidDate: this.form1.feeList[i].paidDate,
+              iouIdList:iouList,
+              deleteFlag: 0}
+            )
+          }
+          console.log(send_data);
+          api({
+            url: "/Fee/updateFee",
+            method: "post",
+            data:send_data
+          }).then(data => {
+            console.log(data);
+            location.reload();
+          }).catch(err => {
+            console.log(err);
+          })
+        }
+        else if(!valid && isChange){
+          console.log('err submit')
+          return false;
+        }
+        else if(!isChange){
+          this.$message('未发现内容变动')
+        }
       })
     },
     deleteFee(fee){
@@ -359,8 +417,18 @@ export default {
       }).catch(err => {
         console.log(err);
       })
-    }
+    },
+    newFee(){
+      let newpage = this.$router.resolve({
+        path: '/creditInfo/fee',
+        query:{
+          creditList:JSON.stringify([this.query_iou])
+        }
+      })
+      window.open(newpage.href, '_blank');
+    },
   },
+
   computed:{
   }
 }

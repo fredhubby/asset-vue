@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-breadcrumb separator="/">
-      <el-breadcrumb-item to="/Main"><i class="el-icon-s-home"></i></el-breadcrumb-item>
+      <el-breadcrumb-item to="/timeRemider"><i class="el-icon-s-home"></i></el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">查询统计</el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">分期还款企业名单</el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">详情</el-breadcrumb-item>
@@ -10,167 +10,138 @@
     <el-row class="el-row1">
       <el-col :span="24">
         <div class="grid-content">
-          <el-button @click="reset('form1')">清空</el-button>
-          <el-button>保存</el-button>
-          <el-button type="primary">保存并提交</el-button>
+          <el-popconfirm
+              title="确定提交？"
+              style="margin-right: 40px;margin-left: 20px"
+              @confirm="submit">
+            <el-button type="primary" slot="reference">提交</el-button>
+          </el-popconfirm>
         </div>
       </el-col>
     </el-row>
 
-    <el-form ref="form1" :model="form1">
-      <el-form-item>
-        <el-row class="el-row2">
-          <el-col :span="3"><div class="grid-content1">债务人：</div></el-col>
-          <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value1"></el-input></div></el-col>
-          <el-col :span="3"><div class="grid-content1" style="margin-left: 20px">应还本金：</div></el-col>
-          <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value2"></el-input></div></el-col>
-        </el-row>
-      </el-form-item>
-    <el-form-item>
-      <el-row class="el-row3">
-        <el-col :span="3"><div class="grid-content1">应还利息：</div></el-col>
-        <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value3"></el-input></div></el-col>
-        <el-col :span="3"><div class="grid-content1" style="margin-left: 20px">还款期限：</div></el-col>
-        <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value4"></el-input></div></el-col>
-      </el-row>
-    </el-form-item>
-    <el-form-item>
-      <el-row class="el-row4">
-        <el-col :span="3"><div class="grid-content1">企业实际控制人：</div></el-col>
-        <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value5"></el-input></div></el-col>
-        <el-col :span="3"><div class="grid-content1" style="margin-left: 20px">债权人：</div></el-col>
-        <el-col :span="7"><div class="grid-content3" style="text-align: start">
-          <el-select v-model="creditMan" clearable filterable placeholder="请选择">
-            <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-            </el-option>
-          </el-select>
-        </div></el-col>
-      </el-row>
-    </el-form-item>
-    <el-form-item>
-      <el-row class="el-row5">
-        <el-col :span="3"><div class="grid-content1">还款是否结清：</div></el-col>
-        <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value6"></el-input></div></el-col>
-        <el-col :span="3"><div class="grid-content1" style="margin-left: 20px">备注：</div></el-col>
-        <el-col :span="7"><div class="grid-content2">
-          <el-input v-model="form1.value7" type="textarea"
-                    autosize
-                    maxlength="100"></el-input>
-        </div></el-col>
-      </el-row>
-    </el-form-item>
+    <el-form style="margin-top: 40px" ref="form" :model="form" label-width="140px" :rules="rules">
+      <el-row :gutter="60">
+        <el-col :span="9" :offset="1">
+          <el-form-item label='债务人' class="form_item" prop="obligor">
+            <el-input v-model="form.obligor" clearable></el-input>
+          </el-form-item>
+        </el-col>
 
-    <el-divider></el-divider>
-    <span style="font-family: 黑体; font-weight: bold;font-size: 20px">还款明细</span>
-    <el-table :data="tableData" border height="300" style="width: 100%" class="el-table">
-      <el-table-column prop="hkid" label="还款ID" width="200"></el-table-column>
-      <el-table-column prop="hksj" label="还款时间" width="200"></el-table-column>
-      <el-table-column prop="hkbjje" label="还款本金金额" width="200"></el-table-column>
-      <el-table-column prop="hklxje" label="还款利息金额" width="200"></el-table-column>
-      <el-table-column prop="zffs" label="支付方式" width="150"></el-table-column>
-      <el-table-column prop="fkr" label="付款人" width="150"></el-table-column>
-      <el-table-column prop="skr" label="收款人" width="120"></el-table-column>
-      <el-table-column prop="bz" label="备注" width="300"></el-table-column>
-      <el-table-column prop="operate" label="操作">
-        删除
-      </el-table-column>
-    </el-table>
+        <el-col :span="9">
+          <el-form-item label='债权人' class="form_item" prop="creditor">
+            <el-select v-model="form.creditor" filterable placeholder="请选择" style="width: 100%">
+              <el-option v-for="item in creditor_options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="60">
+        <el-col :span="9" :offset="1">
+          <el-form-item label='应还本金(元)' class="form_item" prop="payablePrincipal">
+            <el-input v-model="form.payablePrincipal" clearable></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="9">
+          <el-form-item label="还款期限" class="form_item" prop="repaymentTerm">
+            <el-input v-model="form.repaymentTerm" clearable></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="60">
+        <el-col :span="9" :offset="1">
+          <el-form-item label="实际控制人或关键人" class="form_item" prop="actualController">
+            <el-input v-model="form.actualController" clearable></el-input>
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="9">
+          <el-form-item label="还款是否结清：" class="form_item" prop="repaymentStatus">
+            <el-select v-model="form.repaymentStatus" clearable filterable placeholder="请选择" style="width: 100%">
+              <el-option
+                  v-for="item in isEnd_options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="60">
+        <el-col :span="9" :offset="1">
+          <el-form-item label="备注" class="form_item">
+            <el-input v-model="form.remarks" clearable></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
     </el-form>
   </div>
 </template>
 
 <script>
+import {default as api} from "@/utils/api";
+
 export default {
   name: "addfqCompanyInfo",
   data(){
     return{
-      form1:{
-        value1:'',
-        value2:'',
-        value3:'',
-        value4:'',
-        value5:'',
-        value6:'',
-        value7:''
+      form:{obligor:'',creditor:'',payablePrincipal:'',repaymentTerm:'',actualController:'',repaymentStatus:'',remarks:''},
+      rules:{
+        obligor: {required:true,message:'不允许为空',trigger:['change','blur']},
+        creditor: {required:true,message:'不允许为空',trigger:['change','blur']},
+        payablePrincipal: [{required:true,message:'不允许为空',trigger:['change','blur']},{pattern:/^\d+(\.\d?\d?)?$/,message:'必须为数字(最多两位小数)',trigger:['change','blur']}],
+        repaymentStatus:{required:true,message:'不允许为空',trigger:['change','blur']},
       },
-      creditMan:'',
-      options:[{
-        value: '选项1',
-        label: '丹阳工行'
-      }, {
-        value: '选项2',
-        label: '丹阳农行'
-      }, {
-        value: '选项3',
-        label: '丹阳中行'
-      }, {
-        value: '选项4',
-        label: '丹阳建行'
-      }, {
-        value: '选项5',
-        label: '丹阳交行'
-      }, {
-        value: '选项6',
-        label: '丹阳农发行'
-      }, {
-        value: '选项7',
-        label: '丹阳农商行'
-      }, {
-        value: '选项8',
-        label: '丹阳江苏'
-      }, {
-        value: '选项9',
-        label: '丹阳保得'
-      }, {
-        value: '选项10',
-        label: '丹阳华夏'
-      }, {
-        value: '选项11',
-        label: '丹阳民生'
-      }, {
-        value: '选项12',
-        label: '丹阳浦发'
-      }, {
-        value: '选项13',
-        label: '丹阳招商'
-      }, {
-        value: '选项14',
-        label: '丹阳中信'
-      }, {
-        value: '选项15',
-        label: '丹阳兴业'
-      }, {
-        value: '选项16',
-        label: '丹阳南京'
-      }, {
-        value: '选项17',
-        label: '丹阳紫金农商'
-      }, {
-        value: '选项18',
-        label: '丹阳广发'
-      }, {
-        value: '选项19',
-        label: '丹阳储蓄'
-      }],
-      tableData: [{
-        bz:'',
-        skr:'',
-        fkr:'',
-        zffs:'',
-        hklxje:'',
-        hkbjje:'',
-        hksj:'',
-        hkid:''
-      }]
+      creditor_options: [
+        {value: '天惠投资', label: '天惠投资'},
+        {value: '天晟投资', label: '天晟投资'},
+        {value: '天工惠农小贷', label: '天工惠农小贷'},
+        {value: '银润小贷', label: '银润小贷'},
+        {value: '阳光企业', label: '阳光企业'}],
+      isEnd_options:[
+        {value:'0',label:'否'},
+        {value:'1',label:'是'}
+      ]
     }
   },
   methods:{
-    reset(){
-      this.form1 = this.$options.data().form1
+    submit(){
+      this.$refs['form'].validate((valid) => {
+        if(valid){
+          let isNull = true;
+          for(let prop in this.form){
+            if(this.form[prop]!==''){
+              isNull = false;
+            }
+          }
+          if(isNull){
+            alert('内容为空');
+          }
+          else{
+            let sent_data = JSON.parse(JSON.stringify(this.form));
+            sent_data['deleteFlag'] = 0;
+            api({
+              url: "Installments/addInstallment",
+              method: "post",
+              data:sent_data
+            }).then(data => {
+              console.log(data);
+              this.$router.replace('/totalSearch/fqCompany')
+            }).catch(err => {
+              console.log(err);
+            })
+          }
+        }
+        else{
+          this.$message('请检查提交内容')
+        }
+      })
+
     }
   }
 }
@@ -206,6 +177,7 @@ export default {
 }
 .grid-content1{
   background-color: #DCDFE6;
+  text-align: end;
 }
 .el-table{
   margin-top: 20px;

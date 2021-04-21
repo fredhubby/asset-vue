@@ -7,6 +7,10 @@ const service = axios.create({
   baseURL: '/api', // api的base_url
   timeout: 15000                  // 请求超时时间2
 })
+
+service.__proto__ = axios
+
+
 // request拦截器
 // service.interceptors.request.use(config => {
 //   return config

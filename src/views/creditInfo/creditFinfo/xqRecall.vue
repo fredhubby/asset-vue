@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-breadcrumb separator="/">
-      <el-breadcrumb-item to="/Main"><i class="el-icon-s-home"></i></el-breadcrumb-item>
+      <el-breadcrumb-item to="/timeRemider"><i class="el-icon-s-home"></i></el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">债权信息</el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">债权基础信息</el-breadcrumb-item>
     </el-breadcrumb>
@@ -82,7 +82,7 @@
       <el-divider></el-divider>
       <span style="font-family: 黑体; font-weight: bold;font-size: 20px">还款明细</span>
       <el-table :data="tableData" :summary-method="getSummaries" show-summary>
-        <!--        <el-table-column property="id" label="还款ID" width="100"></el-table-column>-->
+<!--        <el-table-column property="id" label="还款ID" width="100"></el-table-column>-->
         <el-table-column property="repaymentDate" label="还款时间" width="120">
           <template slot-scope="scope">
             <span v-show="!scope.row.edit">{{scope.row.repaymentDate}}</span>
@@ -116,7 +116,10 @@
         <el-table-column property="payee" label="收款人" width="130">
           <template slot-scope="scope">
             <span v-show="!scope.row.edit">{{scope.row.payee}}</span>
-            <el-input size="mini" v-show="scope.row.edit" v-model="scope.row.payee"></el-input>
+            <el-select v-show="scope.row.edit" v-model="scope.row.payee" filterable placeholder="请选择" style="width: 100%" size="mini">
+              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+<!--            <el-input size="mini" v-show="scope.row.edit" v-model="scope.row.payee"></el-input>-->
           </template>
         </el-table-column>
         <el-table-column property="remarks" label="备注" width="130">
@@ -136,54 +139,65 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-dialog title="新增还款记录" :visible.sync="dialogShow" :append-to-body="true" :close-on-click-modal="false" :before-close="handleClose">
-        <el-form style="margin-top: 20px" ref="form1" :model="form_add" label-width="110px">
-          <el-row :gutter="20">
-            <el-col :span="10" :offset="1">
-              <el-form-item label='还款本金金额：'>
-                <el-input v-model="form_add.repaymentPrincipal" clearable></el-input>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="10">
-              <el-form-item label='还款利息金额：' class="form_item">
-                <el-input v-model="form_add.repaymentInterest" clearable></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="20">
-            <el-col :span="10" :offset="1">
-              <el-form-item label='还款时间：'>
-                <el-date-picker v-model="form_add.repaymentDate" type="date" placeholder="选择日期" style="width: 100%" format="yyyy-MM-dd" value-format="yyyy-MM-dd"></el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="10">
-              <el-form-item label="支付方式：">
-                <el-input v-model="form_add.payType" clearable></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="20">
-            <el-col :span="10" :offset="1">
-              <el-form-item label="付款人：">
-                <el-input v-model="form_add.drawee" clearable></el-input>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="10">
-              <el-form-item label="收款人：">
-                <el-select v-model="form_add.payee" clearable filterable placeholder="请选择" style="width: 100%">
-                  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-        <el-button type="primary" @click="submitNewRecall" style="margin-left: 50px">提交</el-button>
-      </el-dialog>
     </el-form>
+    <el-dialog title="新增还款记录" :visible.sync="dialogShow" :append-to-body="true" :close-on-click-modal="false" :before-close="handleClose">
+      <el-form style="margin-top: 20px" ref="form_add" :model="form_add" label-width="120px" :rules="form_addRules">
+        <el-row :gutter="20">
+          <el-col :span="10" :offset="1">
+            <el-form-item
+                label-width="150px"
+                label='还款本金金额(元)：'
+                prop="repaymentPrincipal"
+                :rules="[{required:String(this.form_add.repaymentInterest) === '',message:'本金、利息金额不能都为空',trigger:['change','blur']},
+                         {pattern:/^\d+(\.\d?\d?)?$/,message: '必须为数字(最多两位小数)',trigger:['change','blur']}]">
+              <el-input v-model="form_add.repaymentPrincipal" clearable></el-input>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="10">
+            <el-form-item
+                label-width="150px"
+                label='还款利息金额(元)：'
+                class="form_item"
+                prop="repaymentInterest"
+                :rules="[{required:String(this.form_add.repaymentPrincipal) === '',message:'本金、利息金额不能都为空',trigger:['change','blur']},
+                         {pattern:/^\d+(\.\d?\d?)?$/,message: '必须为数字(最多两位小数)',trigger:['change','blur']}]">
+              <el-input v-model="form_add.repaymentInterest" clearable></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="10" :offset="1">
+            <el-form-item label='还款时间：' prop="repaymentDate">
+              <el-date-picker v-model="form_add.repaymentDate" type="date" placeholder="选择日期" style="width: 100%" format="yyyy-MM-dd" value-format="yyyy-MM-dd"></el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="支付方式：" prop="payType">
+              <el-input v-model="form_add.payType" clearable></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="10" :offset="1">
+            <el-form-item label="付款人：" prop="drawee">
+              <el-input v-model="form_add.drawee" clearable></el-input>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="10">
+            <el-form-item label="收款人：" prop="payee">
+              <el-select v-model="form_add.payee" clearable filterable placeholder="请选择" style="width: 100%">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <el-button type="primary" @click="submitNewRecall" style="margin-left: 50px">提交</el-button>
+    </el-dialog>
   </div>
 </template>
 
@@ -196,7 +210,12 @@ export default {
     return{
       activeIndex: '4',
       form:{},
-      form_add:{iouId:'',repaymentPrincipal:'', repaymentInterest:'', payType:'', drawee:'', payee:'', remarks:''},
+      form_add:{iouId:'',repaymentPrincipal:'', repaymentInterest:'', repaymentDate:'', payType:'', drawee:'', payee:'', remarks:''},
+      form_addRules:{
+        repaymentDate:{required:true,message:'不允许为空',trigger:['change','blur']},
+        drawee:{required:true,message:'不允许为空',trigger:['change','blur']},
+        payee:{required:true,message:'不允许为空',trigger:['change','blur']},
+      },
       options: [
         {value: '天惠投资', label: '天惠投资'},
         {value: '天晟投资', label: '天晟投资'},
@@ -211,6 +230,7 @@ export default {
     }
   },
   created() {
+    this.query_iou = this.$route.query.iou.replace(/^\s+|\s+$/g,"");
     api({
       url: "/Recall/getRecall",
       method: "get",
@@ -364,7 +384,7 @@ export default {
         this.$confirm('确认关闭并放弃修改？')
             .then(_ => {
               this.form_add = {iouId:this.form.id,repaymentPrincipal:'', repaymentInterest:'', payType:'', drawee:'', payee:'', remarks:''},
-                  done();
+              done();
             })
             .catch(_ => {});
       }
@@ -376,31 +396,38 @@ export default {
       this.form_add.iouId = this.form.id;
     },
     submitNewRecall(){
-      //判断内容为空
-      let isAllNull = true;
-      for(let key in this.form_add){
-        if(this.form_add[key]!=='' && key!=='iouId'){
-          isAllNull = false;
+      this.$refs['form_add'].validate((valid) => {
+        if(valid){
+          //判断内容为空
+          let isAllNull = true;
+          for(let key in this.form_add){
+            if(this.form_add[key]!=='' && key!=='iouId'){
+              isAllNull = false;
+            }
+          }
+          if(isAllNull){
+            alert("内容为空");
+          }
+          else{
+            this.$confirm('确认提交？')
+                .then(_ => {
+                  api({
+                    url: "/Recall/addRecall",
+                    method: "post",
+                    data:this.form_add
+                  }).then(data => {
+                    location.reload();
+                  }).catch(err => {
+                    console.log(err);
+                  })
+                })
+                .catch(_ => {});
+          }
         }
-      }
-      if(isAllNull){
-        alert("内容为空");
-      }
-      else{
-        this.$confirm('确认提交？')
-            .then(_ => {
-              api({
-                url: "/Recall/addRecall",
-                method: "post",
-                data:this.form_add
-              }).then(data => {
-                location.reload();
-              }).catch(err => {
-                console.log(err);
-              })
-            })
-            .catch(_ => {});
-      }
+        else{
+          this.$message('请检查提交内容')
+        }
+      })
     }
   }
 }

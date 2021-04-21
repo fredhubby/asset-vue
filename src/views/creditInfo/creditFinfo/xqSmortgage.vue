@@ -1,22 +1,14 @@
 <template>
   <div>
     <el-breadcrumb separator="/">
-      <el-breadcrumb-item to="/Main"><i class="el-icon-s-home"></i></el-breadcrumb-item>
+      <el-breadcrumb-item to="/timeRemider"><i class="el-icon-s-home"></i></el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">债权信息</el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">担保抵押信息</el-breadcrumb-item>
     </el-breadcrumb>
     <el-row class="el-row1">
-      <el-col :span="24">
-        <div class="grid-content">
-          <!--          <el-button @click="edit">{{edit_label}}</el-button>-->
-          <!--          <el-popconfirm-->
-          <!--              title="确定提交？"-->
-          <!--              style="margin-right: 40px;margin-left: 20px"-->
-          <!--              @confirm="submit">-->
-          <!--            <el-button type="primary" slot="reference">提交</el-button>-->
-          <!--          </el-popconfirm>-->
-        </div>
-      </el-col>
+      <div class="grid-content">
+        <el-button type="primary" @click="newGuarantee">新增担保</el-button>
+      </div>
     </el-row>
     <el-menu
         :default-active="activeIndex"
@@ -73,23 +65,18 @@
                 style="margin-left: 5px">
               <el-button type="text" slot="reference" size="small">删除</el-button>
             </el-popconfirm>
-            <!--            <el-button type="text" size="small">删除</el-button>-->
+<!--            <el-button type="text" size="small">删除</el-button>-->
           </template>
         </el-table-column>
       </el-table>
     </div>
 
 
-    <!--    :with-header="false"-->
     <el-drawer
         :visible.sync="drawer_show"
         :wrapperClosable="false"
         show-close
         size="50%">
-      <!--      <div style="display: flex;justify-content: space-between">-->
-      <!--        <span style="font-size: 20px; font-weight: bold;margin: 40px 0 0 20px"></span>-->
-      <!--        <el-button icon="el-icon-close" style="border: none; padding: 0 0 0 0; margin: 40px 20px 0 0; font-size: 20px"></el-button>-->
-      <!--      </div>-->
       <el-divider class="inner_divider_top"></el-divider>
       <el-row class="innerBar">
         <el-col :span="24">
@@ -105,34 +92,37 @@
           </div>
         </el-col>
       </el-row>
-      <el-form label-width="80px" label-position="left">
+      <el-form label-width="130px" label-position="left" ref="form1" :model="form1" :rules="rules">
         <span style="font-size: 15px; font-weight: bold; margin-left:20px; margin-bottom:20px; display:inline-block">#基础信息</span>
 
-        <el-form-item label="担保ID:">
+        <el-form-item label="担保ID:" label-width="80px">
           <el-input v-model="form1[drawerInfo].guaranteeId" style="width: 45%" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="担保方式:">
-          <!--          <el-select v-if="allow_edit" v-model="form1[drawerInfo].guaranteeMethod" placeholder="请选择" style="width: 45%">-->
-          <!--            <el-option-->
-          <!--                v-for="item in guaranteeMethodOptions"-->
-          <!--                :key="item.value"-->
-          <!--                :label="item.label"-->
-          <!--                :value="item.value">-->
-          <!--            </el-option>-->
-          <!--          </el-select>-->
+        <el-form-item label="担保方式:" label-width="80px">
+<!--          <el-select v-if="allow_edit" v-model="form1[drawerInfo].guaranteeMethod" placeholder="请选择" style="width: 45%">-->
+<!--            <el-option-->
+<!--                v-for="item in guaranteeMethodOptions"-->
+<!--                :key="item.value"-->
+<!--                :label="item.label"-->
+<!--                :value="item.value">-->
+<!--            </el-option>-->
+<!--          </el-select>-->
           <el-input v-model="num2guarantee[form1[drawerInfo].guaranteeMethod]" style="width: 45%" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="备注:">
+        <el-form-item label="备注:" label-width="80px">
           <el-input v-model="form1[drawerInfo].note" style="width: 45%" :disabled="!allow_edit"></el-input>
         </el-form-item>
 
         <el-divider></el-divider>
         <span style="font-size: 15px; font-weight: bold; margin-left:20px; margin-bottom:20px; display:inline-block">#借据号列表</span>
         <el-form-item
+            label-width="80px"
             v-for="(iou, index) in form1[drawerInfo].iouIdList"
             :label="'借据号' + index"
-            :key="iou.key">
-          <el-input v-model="iou.value" style="width: 45%" :disabled="iou.isorigin"></el-input>
+            :key="iou.key"
+            :prop="drawerInfo+'.iouIdList.'+index+'.value'"
+            :rules="{required:true,message:'不允许为空',trigger:['blur','change']}">
+          <el-input v-model="iou.value" style="width: 30%" :disabled="iou.isorigin"></el-input>
           <el-popconfirm
               v-if="iou.isorigin && !allow_edit"
               :title="Boolean(form1[drawerInfo].iouIdList.length>1)?'确定删除该借据？':'确定删除最后一个借据？此删除将删除整个担保信息'"
@@ -152,7 +142,7 @@
             删除
           </el-button>
         </el-form-item>
-        <el-form-item style="margin-left: 35px">
+        <el-form-item style="margin-left: 0px;margin-top: 20px" label-width="80px">
           <el-button v-if="!allow_edit" type="primary" @click="addIou">新增借据</el-button>
           <el-popconfirm
               v-if="this.form1[drawerInfo].iouIdList.length > this.form1[drawerInfo].iouList_length"
@@ -166,16 +156,15 @@
             </el-button>
           </el-popconfirm>
         </el-form-item>
-      </el-form>
 
-      <el-form v-if="methodNum!=='3'">
+        <div v-if="methodNum!=='3'">
         <el-divider></el-divider>
         <span style="font-size: 15px; font-weight: bold; margin-left:20px; margin-bottom:20px; display:inline-block">{{label_info[methodNum]}}</span>
         <el-collapse v-model="activeNames" class="card_list">
           <el-card
               v-for="(info,index1) in form1[drawerInfo][ListInfoType]"
               :key="info.key">
-            <!--            /////////////////////////////////////////////////////卡片头部///////////////////////////////////////////////////-->
+<!--            /////////////////////////////////////////////////////卡片头部///////////////////////////////////////////////////-->
             <div style="display: flex; justify-content: space-between">
               <el-form label-width="80px" class="card_head_form">
                 <el-form-item
@@ -190,7 +179,7 @@
                 </el-form-item>
                 <el-form-item
                     v-if="methodNum !=='3' && activeNames.indexOf(index1) === -1 && info.isorigin"
-                    label="担保时效:">
+                    :label="(methodNum==='0')?'抵押期间:':(methodNum==='1')?'质押期间':(methodNum==='2')?'担保期间':''">
                   <el-input v-model="info.guaranteeStartDate" style="width: 20%;" :disabled="true"></el-input>
                   <span style="color: #DCDFE6;margin: 0 3px 0 3px">~</span>
                   <el-input v-model="info.guaranteeEndDate" style="width: 25%;" :disabled="true"></el-input>
@@ -210,16 +199,22 @@
               <el-button v-if="!allow_edit && !info.isorigin" type="text" @click.native="removeInfo(info)">删除</el-button>
             </div>
             <el-divider class="inner_divider"></el-divider>
-            <!--            /////////////////////////////////////////////////////卡片内部具体内容///////////////////////////////////////////////////-->
+<!--            /////////////////////////////////////////////////////卡片内部具体内容///////////////////////////////////////////////////-->
             <el-collapse-item :name="index1">
-              <el-form label-width="130px" label-position="left" v-if="Boolean(methodNum==='0')">
-                <!--                <el-form-item label="抵押物ID:">-->
-                <!--                  <el-input v-model="info.id" style="width: 45%" :disabled="!allow_edit"></el-input>-->
-                <!--                </el-form-item>-->
-                <el-form-item label="抵押物名称:">
+
+              <div v-if="Boolean(methodNum==='0')">
+                <el-form-item
+                    :inline-message="true"
+                    label="抵押物名称:"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.collateralName'"
+                    :rules="{required: allow_edit || !info.isorigin,message: '不允许为空',trigger:['blur','change']}">
                   <el-input v-model="info.collateralName" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
                 </el-form-item>
-                <el-form-item label="抵押物类型:">
+                <el-form-item
+                    :inline-message="true"
+                    label="抵押物类型:"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.collateralType'"
+                    :rules="{required: allow_edit || !info.isorigin,message: '不允许为空',trigger:['blur','change']}">
                   <el-select v-if="allow_edit || !info.isorigin" v-model="info.collateralType" placeholder="请选择" style="width: 45%">
                     <el-option
                         v-for="item in collateralType_options"
@@ -233,11 +228,15 @@
                 <el-form-item label="抵押物位置:">
                   <el-input v-model="info.collateralLocation" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
                 </el-form-item>
-                <el-form-item label="土地面积:">
+                <el-form-item
+                    :inline-message="true"
+                    label="土地面积(亩):"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.landArea'"
+                    :rules="{pattern:/^\d+(\.\d*)?$/,message:'必须为数字',trigger:['change','blur']}">
                   <el-input v-model="info.landArea" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
                 </el-form-item>
                 <el-form-item label="土地性质:">
-                  <el-select v-if="allow_edit || !info.isorigin" v-model="landTypeTypeIndex[info.landType]" placeholder="请选择" style="width: 45%">
+                  <el-select v-if="allow_edit || !info.isorigin" v-model="info.landType" placeholder="请选择" style="width: 45%">
                     <el-option
                         v-for="item in landType_options"
                         :key="item.value"
@@ -245,94 +244,96 @@
                         :value="item.value">
                     </el-option>
                   </el-select>
-                  <el-input v-if="!allow_edit && info.isorigin" v-model="info.landType" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
+                  <el-input v-if="!allow_edit && info.isorigin" v-model="landTypeTypeIndex[info.landType]" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
                 </el-form-item>
-                <el-form-item label="房产面积:">
+                <el-form-item
+                    :inline-message="true"
+                    label="房产面积(平方米):"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.propertySize'"
+                    :rules="{pattern:/^\d+(\.\d*)?$/,message:'必须为数字',trigger:['change','blur']}">
                   <el-input v-model="info.propertySize" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
                 </el-form-item>
-                <el-form-item label="抵押物评估价:">
+                <el-form-item
+                    label="抵押物评估价(元):"
+                    :inline-message="true"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.appraisedValue'"
+                    :rules="{pattern:/^\d+(\.\d?\d?)?$/,message:'必须为数字(最多两位小数)',trigger:['change','blur']}">
                   <el-input v-model="info.appraisedValue" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
                 </el-form-item>
-                <el-form-item label="抵押物登记金额:">
+                <el-form-item
+                    label="抵押物登记金额(元):"
+                    :inline-message="true"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.registrationAmount'"
+                    :rules="{pattern:/^\d+(\.\d?\d?)?$/,message:'必须为数字(最多两位小数)',trigger:['change','blur']}">
                   <el-input v-model="info.registrationAmount" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
                 </el-form-item>
-                <el-form-item label="担保时效起止日期:">
+                <el-form-item label="抵押期间起止日期:">
                   <el-input v-if="!allow_edit && info.isorigin" v-model="info.guaranteeStartDate" style="width: 30%;" :disabled="!allow_edit && info.isorigin"></el-input>
                   <span v-if="!allow_edit && info.isorigin" style="color: #DCDFE6;margin: 0 3px 0 3px">~</span>
                   <el-input v-if="!allow_edit && info.isorigin" v-model="info.guaranteeEndDate" style="width: 30%;" :disabled="!allow_edit && info.isorigin"></el-input>
-                  <el-button v-if="!allow_edit && info.isorigin" type="text" size="small" @click="timeDetail(index1)">详情</el-button>
-                  <!--                  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
-                  <el-dialog v-if="info.isorigin" title="担保时效历史" :visible.sync="info.dialogShow" :append-to-body="true" :close-on-click-modal="false" :before-close="handleClose">
-                    <el-table :data="timeData">
-                      <el-table-column property="guaranteeMethod" label="时效类型" width="80"></el-table-column>
-                      <el-table-column property="reRegistrationDate" label="创建日期" width="120">
-                        <template slot-scope="scope">
-                          <span v-show="!scope.row.edit">{{scope.row.reRegistrationDate}}</span>
-                          <el-date-picker v-show="scope.row.edit" v-model="scope.row.reRegistrationDate" type="date" placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd"></el-date-picker>
-                        </template>
-                      </el-table-column>
-                      <el-table-column property="guaranteeStartDate" label="时效起始日" width="120">
-                        <template slot-scope="scope">
-                          <span v-show="!scope.row.edit">{{scope.row.guaranteeStartDate}}</span>
-                          <el-date-picker v-show="scope.row.edit" v-model="scope.row.guaranteeStartDate" type="date" placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd"></el-date-picker>
-                        </template>
-                      </el-table-column>
-                      <el-table-column property="guaranteeEndDate" label="时效截止日" width="120">
-                        <template slot-scope="scope">
-                          <span v-show="!scope.row.edit">{{scope.row.guaranteeEndDate}}</span>
-                          <el-date-picker v-show="scope.row.edit" v-model="scope.row.guaranteeEndDate" type="date" placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd"></el-date-picker>
-                        </template>
-                      </el-table-column>
-                      <el-table-column property="reminderDay" label="时效提醒" width="100">
-                        <template slot-scope="scope">
-                          <span v-show="!scope.row.edit">{{scope.row.reminderDay}}</span>
-                          <el-input size="mini" v-show="scope.row.edit" v-model="scope.row.reminderDay"></el-input>
-                        </template>
-                      </el-table-column>
-                      <el-table-column property="operate" label="操作" width="130">
-                        <template slot-scope="scope">
-                          <el-button @click="timeDataEdit(scope.row,scope.$index)" type="text" size="small">{{scope.row.edit_label}}</el-button>
-                          <el-button type="text" size="small" @click="deleteTimeData(scope.row)">删除</el-button>
-                        </template>
-                      </el-table-column>
-                    </el-table>
-                    <el-button type="primary" @click="saveTableData" style="float: right;margin-right: 70px">保存修改</el-button>
-                    <el-form-item v-if="isRegister" label="担保时效起止日" style="margin-top: 50px">
-                      <el-date-picker v-model="newGuaranteeStartDate" type="date" placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd" style="width: 30%"></el-date-picker>
-                      <el-date-picker v-model="newGuaranteeEndDate" type="date" placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd" style="width: 30%"></el-date-picker>
-                    </el-form-item>
-                    <el-form-item v-if="isRegister" label="担保时效提醒">
-                      <el-input v-model="newReminderDay" style="width: 30%"></el-input>
-                    </el-form-item>
-                    <el-form-item v-if="isRegister" label="登记日期">
-                      <el-date-picker v-model="reRegisterDate" type="date" placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd" style="width: 30%"></el-date-picker>
-                    </el-form-item>
-                    <el-button type="primary" @click="reRegister(index1)" style="margin-left: 50px">重新登记</el-button>
-                    <el-popconfirm v-if="isRegister" title="确定提交？" @confirm="registerSubmit(index1)">
-                      <el-button type="primary" slot="reference" style="margin-left: 20px">提交</el-button>
-                    </el-popconfirm>
-                  </el-dialog>
-                  <!--                  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
-                  <el-date-picker
-                      v-if="allow_edit || !info.isorigin" v-model="info.guaranteeStartDate"
-                      type="date" placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd" style="width: 50%">
-                  </el-date-picker>
-                  <el-date-picker
-                      v-if="allow_edit || !info.isorigin" v-model="info.guaranteeEndDate"
-                      type="date" placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd" style="width: 50%">
-                  </el-date-picker>
+                  <el-row v-if="allow_edit || !info.isorigin">
+                    <el-col :span="10">
+                      <el-form-item
+                          style="margin-left: 0px"
+                          :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.guaranteeStartDate'"
+                          :rules="{required: allow_edit || !info.isorigin,message: '不允许为空',trigger:['blur','change']}">
+                        <el-date-picker
+                            v-model="info.guaranteeStartDate"
+                            type="date" placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd" style="width: 100%">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="10">
+                      <el-form-item
+                          style="margin-left: 0px"
+                          :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.guaranteeEndDate'"
+                          :rules="{required: allow_edit || !info.isorigin,message: '不允许为空',trigger:['blur','change']}">
+                        <el-date-picker
+                            v-model="info.guaranteeEndDate"
+                            type="date" placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd" style="width: 100%">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
                 </el-form-item>
-                <el-form-item label="担保时效提醒:">
+                <el-form-item
+                    :inline-message="true"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.reminderDay'"
+                    :rules="[{required:allow_edit || !info.isorigin,message:'不允许为空',trigger:['blur','change']},{pattern:/^\d+$/,message:'必须为数字',trigger:['change','blur']}]">
+                  <template slot="label">
+                    <span>提醒时间(天):</span>
+                    <el-tooltip class="item" effect="dark" content="提前多长时间进行时效提醒" placement="top-start">
+                      <i class="el-icon-info"></i>
+                    </el-tooltip>
+                  </template>
                   <el-input v-model="info.reminderDay" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
                 </el-form-item>
-                <el-form-item v-if="!allow_edit && info.isorigin" label="担保人:">
+                <el-form-item
+                    label="是否被催告:"
+                    :inline-message="true"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.timeConversion'"
+                    :rules="[{required:allow_edit || !info.isorigin,message:'不允许为空',trigger:['blur','change']}]">
+                  <span v-if="!allow_edit && info.isorigin" style="color: #C0C4CC; margin-left: 15px">{{Boolean(info.timeConversion==='1')?'是':'否'}}</span>
+                  <el-select v-if="allow_edit || !info.isorigin" v-model="info.timeConversion" placeholder="请选择" style="width: 45%">
+                    <el-option
+                        v-for="item in isurge_options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item v-if="!allow_edit && info.isorigin" label="抵押人:">
                   <el-input v-model="info.guarantor" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
                 </el-form-item>
                 <div v-if="allow_edit || !info.isorigin">
                   <el-form-item
                       v-for="(guarantor, index2) in info.guarantorList"
-                      :label="'担保人' + index2"
-                      :key="guarantor.key">
+                      :label="'抵押人' + index2"
+                      :key="guarantor.key"
+                      :inline-message="true"
+                      :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.guarantorList.'+index2+'.value'"
+                      :rules="[{required:allow_edit || !info.isorigin,message:'不允许为空',trigger:['blur','change']}]">
                     <el-input v-model="guarantor.value" style="width: 45%"></el-input>
                     <el-button
                         @click.prevent="removeGuarantor(guarantor,index1)"
@@ -342,18 +343,24 @@
                     </el-button>
                   </el-form-item>
                   <el-form-item style="margin-left: 35px">
-                    <el-button type="primary" @click="addGuarantor(index1)">新增担保人</el-button>
+                    <el-button type="primary" @click="addGuarantor(index1)">新增抵押人</el-button>
                   </el-form-item>
                 </div>
-              </el-form>
-              <el-form label-width="130px" label-position="left" v-if="Boolean(methodNum==='1')">
-                <!--                <el-form-item label="抵押物ID:">-->
-                <!--                  <el-input v-model="info.id" style="width: 45%" :disabled="!allow_edit"></el-input>-->
-                <!--                </el-form-item>-->
-                <el-form-item label="质押物名称:">
+              </div>
+
+              <div v-if="Boolean(methodNum==='1')">
+                <el-form-item
+                    label="质押物名称:"
+                    :inline-message="true"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.pledgesName'"
+                    :rules="{required: allow_edit || !info.isorigin,message: '不允许为空',trigger:['blur','change']}">
                   <el-input v-model="info.pledgesName" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
                 </el-form-item>
-                <el-form-item label="质押物类型:">
+                <el-form-item
+                    label="质押物类型:"
+                    :inline-message="true"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.pledgesType'"
+                    :rules="{required: allow_edit || !info.isorigin,message: '不允许为空',trigger:['blur','change']}">
                   <el-select v-if="allow_edit || !info.isorigin" v-model="info.pledgesType" placeholder="请选择" style="width: 45%">
                     <el-option
                         v-for="item in pledgesType_options"
@@ -364,50 +371,88 @@
                   </el-select>
                   <el-input v-if="!allow_edit && info.isorigin" v-model="pledgesTypeIndex[info.pledgesType]" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
                 </el-form-item>
-                <el-form-item label="质押物价值:">
+                <el-form-item
+                    :inline-message="true"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.pledgesValue'"
+                    :rules="{pattern:/^\d+(\.\d?\d?)?$/,message:'必须为数字(最多两位小数)',trigger:['change','blur']}"
+                    label="质押物价值(元):">
                   <el-input v-model="info.pledgesValue" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
                 </el-form-item>
-                <el-form-item label="担保时效起止日期:">
+                <el-form-item label="质押期间起止日期:">
                   <el-input v-if="!allow_edit && info.isorigin" v-model="info.guaranteeStartDate" style="width: 30%;" :disabled="!allow_edit && info.isorigin"></el-input>
                   <span v-if="!allow_edit && info.isorigin" style="color: #DCDFE6;margin: 0 3px 0 3px">~</span>
                   <el-input v-if="!allow_edit && info.isorigin" v-model="info.guaranteeEndDate" style="width: 30%;" :disabled="!allow_edit && info.isorigin"></el-input>
-                  <el-button v-if="!allow_edit && info.isorigin" type="text" size="small" @click="reRegister(index1)">详情</el-button>
-                  <el-dialog
-                      v-if="info.isorigin"
-                      title="收货地址"
-                      :visible.sync="info.dialogShow">
-                    <span>{{info}}</span>
-                  </el-dialog>
-                  <el-date-picker
-                      v-if="allow_edit || !info.isorigin"
-                      v-model="info.guaranteeStartDate"
-                      type="date"
-                      placeholder="选择日期"
-                      format="yyyy-MM-dd"
-                      value-format="yyyy-MM-dd"
-                      style="width: 50%">
-                  </el-date-picker>
-                  <el-date-picker
-                      v-if="allow_edit || !info.isorigin"
-                      v-model="info.guaranteeEndDate"
-                      type="date"
-                      placeholder="选择日期"
-                      format="yyyy-MM-dd"
-                      value-format="yyyy-MM-dd"
-                      style="width: 50%">
-                  </el-date-picker>
+                  <el-row v-if="allow_edit || !info.isorigin">
+                    <el-col :span="10">
+                      <el-form-item
+                          style="margin-left: 0px"
+                          :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.guaranteeStartDate'"
+                          :rules="{required: allow_edit || !info.isorigin,message: '不允许为空',trigger:['blur','change']}">
+                        <el-date-picker
+                            v-model="info.guaranteeStartDate"
+                            type="date"
+                            placeholder="选择日期"
+                            format="yyyy-MM-dd"
+                            value-format="yyyy-MM-dd"
+                            style="width: 100%">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="10">
+                      <el-form-item
+                          style="margin-left: 0px"
+                          :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.guaranteeEndDate'"
+                          :rules="{required: allow_edit || !info.isorigin,message: '不允许为空',trigger:['blur','change']}">
+                        <el-date-picker
+                            v-model="info.guaranteeEndDate"
+                            type="date"
+                            placeholder="选择日期"
+                            format="yyyy-MM-dd"
+                            value-format="yyyy-MM-dd"
+                            style="width: 100%">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
                 </el-form-item>
-                <el-form-item label="担保时效提醒:">
+                <el-form-item
+                    :inline-message="true"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.reminderDay'"
+                    :rules="[{required:allow_edit || !info.isorigin,message:'不允许为空',trigger:['blur','change']},{pattern:/^\d+$/,message:'必须为数字',trigger:['change','blur']}]">
+                  <template slot="label">
+                    <span>提醒时间(天):</span>
+                    <el-tooltip class="item" effect="dark" content="提前多长时间进行时效提醒" placement="top-start">
+                      <i class="el-icon-info"></i>
+                    </el-tooltip>
+                  </template>
                   <el-input v-model="info.reminderDay" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
                 </el-form-item>
-                <el-form-item v-if="!allow_edit && info.isorigin" label="担保人:">
+                <el-form-item
+                    label="是否被催告:"
+                    :inline-message="true"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.timeConversion'"
+                    :rules="[{required:allow_edit || !info.isorigin,message:'不允许为空',trigger:['blur','change']}]">
+                  <span v-if="!allow_edit && info.isorigin" style="color: #C0C4CC; margin-left: 15px">{{Boolean(info.timeConversion==='1')?'是':'否'}}</span>
+                  <el-select v-if="allow_edit || !info.isorigin" v-model="info.timeConversion" placeholder="请选择" style="width: 45%">
+                    <el-option
+                        v-for="item in isurge_options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item v-if="!allow_edit && info.isorigin" label="质押人:">
                   <el-input v-model="info.guarantor" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
                 </el-form-item>
                 <el-form-item
                     v-if="allow_edit || !info.isorigin"
                     v-for="(guarantor, index2) in info.guarantorList"
-                    :label="'担保人' + index2"
-                    :key="guarantor.key">
+                    :label="'质押人' + index2"
+                    :key="guarantor.key"
+                    :inline-message="true"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.guarantorList.'+index2+'.value'"
+                    :rules="[{required:allow_edit || !info.isorigin,message:'不允许为空',trigger:['blur','change']}]">
                   <el-input v-model="guarantor.value" style="width: 45%"></el-input>
                   <el-button
                       @click.prevent="removeGuarantor(guarantor,index1)"
@@ -417,45 +462,65 @@
                   </el-button>
                 </el-form-item>
                 <el-form-item v-if="allow_edit || !info.isorigin" style="margin-left: 35px">
-                  <el-button type="primary" @click="addGuarantor(index1)">新增担保人</el-button>
+                  <el-button type="primary" @click="addGuarantor(index1)">新增质押人</el-button>
                 </el-form-item>
-              </el-form>
-              <el-form label-width="130px" label-position="left" v-if="Boolean(methodNum==='2')">
-                <!--                <el-form-item label="抵押物ID:">-->
-                <!--                  <el-input v-model="info.id" style="width: 45%" :disabled="!allow_edit"></el-input>-->
-                <!--                </el-form-item>-->
-                <el-form-item label="担保时效起止日期:">
+              </div>
+
+              <div v-if="Boolean(methodNum==='2')">
+                <el-form-item label="担保期间起止日期:">
                   <el-input v-if="!allow_edit && info.isorigin" v-model="info.guaranteeStartDate" style="width: 30%;" :disabled="!allow_edit && info.isorigin"></el-input>
                   <span v-if="!allow_edit && info.isorigin" style="color: #DCDFE6;margin: 0 3px 0 3px">~</span>
                   <el-input v-if="!allow_edit && info.isorigin" v-model="info.guaranteeEndDate" style="width: 30%;" :disabled="!allow_edit && info.isorigin"></el-input>
-                  <el-button v-if="!allow_edit && info.isorigin" type="text" size="small" @click="reRegister(index1)">详情</el-button>
-                  <el-dialog
-                      v-if="info.isorigin"
-                      title="收货地址"
-                      :visible.sync="info.dialogShow">
-                    <span>{{info}}</span>
-                  </el-dialog>
-                  <el-date-picker
-                      v-if="allow_edit || !info.isorigin"
-                      v-model="info.guaranteeStartDate"
-                      type="date"
-                      placeholder="选择日期"
-                      format="yyyy-MM-dd"
-                      value-format="yyyy-MM-dd"
-                      style="width: 50%">
-                  </el-date-picker>
-                  <el-date-picker
-                      v-if="allow_edit || !info.isorigin"
-                      v-model="info.guaranteeEndDate"
-                      type="date"
-                      placeholder="选择日期"
-                      format="yyyy-MM-dd"
-                      value-format="yyyy-MM-dd"
-                      style="width: 50%">
-                  </el-date-picker>
+                  <el-row v-if="allow_edit || !info.isorigin">
+                    <el-col :span="10">
+                      <el-form-item
+                          style="margin-left: 0px"
+                          :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.guaranteeStartDate'"
+                          :rules="{required: allow_edit || !info.isorigin,message: '不允许为空',trigger:['blur','change']}">
+                        <el-date-picker
+                            v-model="info.guaranteeStartDate"
+                            type="date" placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd" style="width: 100%">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="10">
+                      <el-form-item
+                          style="margin-left: 0px"
+                          :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.guaranteeEndDate'"
+                          :rules="{required: allow_edit || !info.isorigin,message: '不允许为空',trigger:['blur','change']}">
+                        <el-date-picker
+                            v-model="info.guaranteeEndDate"
+                            type="date" placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd" style="width: 100%">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
                 </el-form-item>
-                <el-form-item label="担保时效提醒:">
+                <el-form-item
+                    :inline-message="true"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.reminderDay'"
+                    :rules="[{required:allow_edit || !info.isorigin,message:'不允许为空',trigger:['blur','change']},{pattern:/^\d+$/,message:'必须为数字',trigger:['change','blur']}]">
+                  <template slot="label">
+                    <span>提醒时间(天):</span>
+                    <el-tooltip class="item" effect="dark" content="提前多长时间进行时效提醒" placement="top-start">
+                      <i class="el-icon-info"></i>
+                    </el-tooltip>
+                  </template>
                   <el-input v-model="info.reminderDay" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
+                </el-form-item>
+                <el-form-item label="是否被催告:"
+                    :inline-message="true"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.timeConversion'"
+                    :rules="[{required:allow_edit || !info.isorigin,message:'不允许为空',trigger:['blur','change']}]">
+                  <span v-if="!allow_edit && info.isorigin" style="color: #C0C4CC; margin-left: 15px">{{Boolean(info.timeConversion==='1')?'是':'否'}}</span>
+                  <el-select v-if="allow_edit || !info.isorigin" v-model="info.timeConversion" placeholder="请选择" style="width: 45%">
+                    <el-option
+                        v-for="item in isurge_options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                    </el-option>
+                  </el-select>
                 </el-form-item>
                 <el-form-item  v-if="!allow_edit && info.isorigin" label="担保人:">
                   <el-input v-model="info.guarantor" style="width: 45%" :disabled="!allow_edit && info.isorigin"></el-input>
@@ -464,7 +529,10 @@
                     v-if="allow_edit || !info.isorigin"
                     v-for="(guarantor, index2) in info.guarantorList"
                     :label="'担保人' + index2"
-                    :key="guarantor.key">
+                    :key="guarantor.key"
+                    :inline-message="true"
+                    :prop="drawerInfo+'.'+ListInfoType + '.' + index1+'.guarantorList.'+index2+'.value'"
+                    :rules="[{required:allow_edit || !info.isorigin,message:'不允许为空',trigger:['blur','change']}]">
                   <el-input v-model="guarantor.value" style="width: 45%"></el-input>
                   <el-button
                       @click.prevent="removeGuarantor(guarantor,index1)"
@@ -476,12 +544,13 @@
                 <el-form-item v-if="allow_edit || !info.isorigin" style="margin-left: 35px">
                   <el-button type="primary" @click="addGuarantor(index1)">新增担保人</el-button>
                 </el-form-item>
-              </el-form>
+              </div>
+
             </el-collapse-item>
           </el-card>
         </el-collapse>
-        <!--            /////////////////////////////////////////////////////新增卡片///////////////////////////////////////////////////-->
-        <el-form-item v-if="!allow_edit && methodNum!=='3'" style="margin-left: 60px">
+<!--            /////////////////////////////////////////////////////新增卡片///////////////////////////////////////////////////-->
+        <el-form-item v-if="!allow_edit && methodNum!=='3'" style="margin-left: 0px" label-width="45px">
           <el-button v-if="!allow_edit && methodNum==='0'" type="primary" @click="addCollatera">新增抵押物</el-button>
           <el-button v-if="!allow_edit && methodNum==='1'" type="primary" @click="addPledge">新增质押物</el-button>
           <el-button v-if="!allow_edit && methodNum==='2'" type="primary" @click="addAssurance">新增保证信息</el-button>
@@ -497,8 +566,8 @@
             </el-button>
           </el-popconfirm>
         </el-form-item>
+        </div>
       </el-form>
-
     </el-drawer>
 
   </div>
@@ -519,7 +588,7 @@ export default {
         pledgesInfo:{guaranteeId:'', guaranteeMethod:'', id:'', iouId:'', iouIdList:[], note:'', pledgesList:[]}
       },
       tableData:[],
-
+      rules:{},
       methodNum:'0',
       drawerInfo:'collateralInfo',
       ListInfoType:'collateralList',
@@ -561,6 +630,10 @@ export default {
         {value:'4', label:'基金份额、股权'},
         {value:'5', label:'知识产权中的财产权'},
         {value:'6', label:'其它'}],
+      isurge_options:[
+        {value:'0',label:'否'},
+        {value:'1',label:'是'}
+      ],
       allow_edit:false,
       activeNames: [],
       label_info: {'0':"#抵押物信息",'1':"#质押物信息",'2':"#保证信息"},
@@ -571,6 +644,7 @@ export default {
       newGuaranteeEndDate:'',
       newReminderDay:'',
       reRegisterDate:'',
+
 
       pickerOptions:[],
       temp_key:0,
@@ -584,6 +658,7 @@ export default {
   },
   created() {
     var _this = this;
+    this.query_iou = this.$route.query.iou.replace(/^\s+|\s+$/g,"");
     api({
       url: "/Secure/getSecure",
       method: "get",
@@ -596,6 +671,8 @@ export default {
       this.origin_form_data = data.data.datas;
       this.jsondata2form(data.data.datas);
       this.setTableData();
+      //如果传参存在除借据号以外的信息，则打开对应的卡片
+      this.openByquery();
     }).catch(err => {
       console.log(err);
     })
@@ -605,7 +682,6 @@ export default {
       //主要是为了在列表中加上key
       //使用JSON转换能够实现深拷贝
       this.form1 = JSON.parse(JSON.stringify(data)); //经过测试，这样给data中的数据复制，内部的所有属性都会被监测
-
       for(let prop in this.form1){
         if(this.form1[prop]!==null){
           let iouList_length = 0;
@@ -621,14 +697,29 @@ export default {
                 this.$set(this.form1[prop][key][i],'key',this.getTempKey());
                 this.$set(this.form1[prop][key][i],'isorigin',true);
                 this.$set(this.form1[prop][key][i],'dialogShow',false);
-
-                let guarantors = this.form1[prop][key][i].guarantor.split(",");
+                let guarantors = [];
+                if(this.form1[prop][key][i].guarantor !== null){
+                  if(this.form1[prop][key][i].guarantor instanceof Object){
+                    guarantors = this.form1[prop][key][i].guarantor.split(",");
+                  }
+                  else{
+                    guarantors.push(this.form1[prop][key][i].guarantor);
+                  }
+                }
+                // if(this.form1[prop][key][i].guarantor instanceof Object && this.form1[prop][key][i].guarantor !== null) {
+                //   guarantors = this.form1[prop][key][i].guarantor.split(",");
+                // }
+                // else if(this.form1[prop][key][i].guarantor instanceof String && this.form1[prop][key][i].guarantor !== null){
+                //   guarantors.push(this.form1[prop][key][i].guarantor);
+                // }
                 let guarantorList = [];
                 this.$set(this.form1[prop][key][i],'guarantorList',guarantorList)
                 console.log('guarantos:'+guarantors)
                 for(let j=0;j<guarantors.length;j++){
                   this.form1[prop][key][i].guarantorList.push({key:this.getTempKey(),value:guarantors[j]})
                 }
+                console.log('担保人测试');
+                console.log(this.form1[prop][key][i])
                 // this.$set(this.form1[prop][key][i],'guarantorList',guarantorList)
                 // this.form1[prop][key][i]['guarantorList'] = guarantorList;
               }
@@ -641,17 +732,30 @@ export default {
               }
               //当借据号只有一个时，传来的数据可能不是List，而是字符串
               let iouList = [];
-              if(this.form1[prop][key] instanceof Object){
-                iouList_length = this.form1[prop][key].length;
-                for(let i=0;i<iouList_length;i++){
-                  let iouValue = this.form1[prop][key][i];
+              if(this.form1[prop][key]!==null){
+                if(this.form1[prop][key] instanceof Object){
+                  iouList_length = this.form1[prop][key].length;
+                  for(let i=0;i<iouList_length;i++){
+                    let iouValue = this.form1[prop][key][i];
+                    iouList.push({key:this.getTempKey(),value:iouValue,isorigin:true})
+                  }
+                }
+                else{
+                  let iouValue = this.form1[prop][key];
                   iouList.push({key:this.getTempKey(),value:iouValue,isorigin:true})
                 }
               }
-              else if(this.form1[prop][key] instanceof String){
-                let iouValue = this.form1[prop][key];
-                iouList.push({key:this.getTempKey(),value:iouValue,isorigin:true})
-              }
+              // if(this.form1[prop][key] instanceof Object){
+              //   iouList_length = this.form1[prop][key].length;
+              //   for(let i=0;i<iouList_length;i++){
+              //     let iouValue = this.form1[prop][key][i];
+              //     iouList.push({key:this.getTempKey(),value:iouValue,isorigin:true})
+              //   }
+              // }
+              // else if(this.form1[prop][key] instanceof String){
+              //   let iouValue = this.form1[prop][key];
+              //   iouList.push({key:this.getTempKey(),value:iouValue,isorigin:true})
+              // }
               this.form1[prop][key] = iouList;
             }
           }
@@ -683,12 +787,30 @@ export default {
         }
       }
     },
+    openByquery(){
+      if((typeof this.$route.query.type) !== 'undefined' && this.$route.query.type!== ''){
+        this.methodNum = this.$route.query.type;
+        this.drawerInfo = this.num2labelInfo[this.methodNum];
+        this.ListInfoType = this.num2LitInfo[this.methodNum];
+        this.drawer_show=true;
+        if((typeof this.$route.query.id) !== 'undefined' && this.$route.query.id!== ''){
+          this.form1[this.drawerInfo][this.ListInfoType].forEach((info,index) => {
+            if(info.id.replace(/^\s+|\s+$/g,"") === this.$route.query.id.replace(/^\s+|\s+$/g,"")){
+              this.activeNames=[index];
+              // var ele = document.getElementsByClassName('card_list');
+              // console.log(ele)
+            }
+          })
+        }
+      }
+    },
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     guaranteeDetail(row){
       this.drawer_show=true;
       this.methodNum = row.guaranteeMethodNum;
       this.drawerInfo = this.num2labelInfo[row.guaranteeMethodNum];
       this.ListInfoType = this.num2LitInfo[row.guaranteeMethodNum];
+      this.activeNames=[];
     },
     getTempKey(){
       this.temp_key++;
@@ -846,54 +968,68 @@ export default {
     },
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     submit(){
-      let send_data = {};
-      // let typeIndex = {'0':'collateralInfo','1':'pledgesInfo','2':'assuranceInfo','3':'guaranteeInfo'};
-      // let typeIndex2 = {'0':'collateralList','1':'pledgesList','2':'assuranceList'};
-      //
-      // let guaranteeMethod = typeIndex[this.methodNum];
-      send_data[this.drawerInfo] = {};
-      send_data[this.drawerInfo]['guaranteeId'] = this.form1[this.drawerInfo].guaranteeId
-      send_data[this.drawerInfo]['guaranteeMethod'] = this.form1[this.drawerInfo].guaranteeMethod
-      send_data[this.drawerInfo]['note'] = this.form1[this.drawerInfo].note;
-      send_data[this.drawerInfo]['iouIdList'] = this.origin_form_data[this.drawerInfo].iouIdList
 
-      if(this.form1.guaranteeMethod !== '3'){
-        send_data[this.drawerInfo][this.ListInfoType] = [];
-        for(let i=0;i<this.form1[this.drawerInfo][this.ListInfoType].length;i++){
-          let temp_dict = {};
-          for(let key in this.form1[this.drawerInfo][this.ListInfoType][i]){
-            if(key === 'guarantorList'){
-              let guarantors='';
-              let j;
-              for(j=0;j<this.form1[this.drawerInfo][this.ListInfoType][i][key].length;j++){
-                if(j===0){
-                  guarantors+=String(this.form1[this.drawerInfo][this.ListInfoType][i][key][j].value);
+      this.$refs['form1'].validate((valid) => {
+        if(valid){
+          let send_data = {};
+          send_data[this.drawerInfo] = JSON.parse(JSON.stringify(this.origin_form_data[this.drawerInfo]));
+          // let typeIndex = {'0':'collateralInfo','1':'pledgesInfo','2':'assuranceInfo','3':'guaranteeInfo'};
+          // let typeIndex2 = {'0':'collateralList','1':'pledgesList','2':'assuranceList'};
+          //
+          // let guaranteeMethod = typeIndex[this.methodNum];
+          // send_data[this.drawerInfo] = {};
+          // send_data[this.drawerInfo]['guaranteeId'] = this.form1[this.drawerInfo].guaranteeId
+          // send_data[this.drawerInfo]['guaranteeMethod'] = this.form1[this.drawerInfo].guaranteeMethod
+          send_data[this.drawerInfo]['note'] = this.form1[this.drawerInfo].note;
+          // send_data[this.drawerInfo]['iouIdList'] = this.origin_form_data[this.drawerInfo].iouIdList
+
+          if(this.form1.guaranteeMethod !== '3'){
+            // send_data[this.drawerInfo][this.ListInfoType] = [];
+            for(let i=0;i<this.form1[this.drawerInfo][this.ListInfoType].length;i++){
+              // let temp_dict = {};
+              for(let key in this.form1[this.drawerInfo][this.ListInfoType][i]){
+                if(key === 'guarantorList'){
+                  let guarantors='';
+                  let j;
+                  for(j=0;j<this.form1[this.drawerInfo][this.ListInfoType][i][key].length;j++){
+                    if(j===0){
+                      guarantors+=String(this.form1[this.drawerInfo][this.ListInfoType][i][key][j].value);
+                    }
+                    else{
+                      guarantors+=","+String(this.form1[this.drawerInfo][this.ListInfoType][i][key][j].value)
+                    }
+                  }
+                  // temp_dict['guarantor'] = guarantors;
+                  send_data[this.drawerInfo][this.ListInfoType][i]['guarantor'] = guarantors;
                 }
-                else{
-                  guarantors+=","+String(this.form1[this.drawerInfo][this.ListInfoType][i][key][j].value)
+                else if(key !== 'key' && key !== 'isorigin' && key!== 'dialogShow'){
+                  // temp_dict[key] = this.form1[this.drawerInfo][this.ListInfoType][i][key];
+                  send_data[this.drawerInfo][this.ListInfoType][i][key] = this.form1[this.drawerInfo][this.ListInfoType][i][key];
                 }
               }
-              temp_dict['guarantor'] = guarantors;
-            }
-            else if(key !== 'key' && key !== 'isorigin' && key!== 'dialogShow'){
-              temp_dict[key] = this.form1[this.drawerInfo][this.ListInfoType][i][key];
+              // send_data[this.drawerInfo][this.ListInfoType].push(temp_dict);
             }
           }
-          send_data[this.drawerInfo][this.ListInfoType].push(temp_dict);
+          console.log(send_data);
+          api({
+            url: "/Secure/updateSecure",
+            method: "post",
+            data:send_data
+          }).then(data => {
+            // console.log(data);
+            // this.$router.replace('/creditInfo/creditFinfo/creditMenu');
+            location.reload();
+          }).catch(err => {
+            console.log(err);
+          })
         }
-      }
-      // console.log(send_data);
-      api({
-        url: "/Secure/updateSecure",
-        method: "post",
-        data:send_data
-      }).then(data => {
-        // console.log(data);
-        // this.$router.replace('/creditInfo/creditFinfo/creditMenu');
-        location.reload();
-      }).catch(err => {
-        console.log(err);
+        else{
+          console.log('err submit')
+          this.$message('提交内容不符合要求')
+          return false;
+        }
       })
+
     },
     deleteAll(row){
       api({
@@ -927,17 +1063,33 @@ export default {
     removeIou(iou){
       //如果删除的是原有的借据，会调用删除接口，否则只是在界面上删除
       if(iou.isorigin){
-        api({
-          url: "/Secure/deleteSecureByIouId",
-          method: "post",
-          data:{guaranteeId:this.form1[this.drawerInfo].guaranteeId,iouId:iou.value}
-        }).then(data => {
-          // console.log(data);
-          // this.$router.replace('/creditInfo/creditFinfo/creditMenu');
-          location.reload();
-        }).catch(err => {
-          console.log(err);
-        })
+        console.log(this.form1[this.drawerInfo])
+        if(this.form1[this.drawerInfo].iouIdList.length===1){
+          api({
+            url: "/Secure/deleteSecureByGuaranteeId",
+            method: "post",
+            data:{'guaranteeId':this.form1[this.drawerInfo].guaranteeId,'guaranteeMethod':this.form1[this.drawerInfo].guaranteeMethod}
+          }).then(data => {
+            // console.log(data);
+            // this.$router.replace('/creditInfo/creditFinfo/creditMenu');
+            location.reload();
+          }).catch(err => {
+            console.log(err);
+          })
+        }
+        else{
+          api({
+            url: "/Secure/deleteSecureByIouId",
+            method: "post",
+            data:{guaranteeId:this.form1[this.drawerInfo].guaranteeId,iouId:iou.value}
+          }).then(data => {
+            // console.log(data);
+            // this.$router.replace('/creditInfo/creditFinfo/creditMenu');
+            location.reload();
+          }).catch(err => {
+            console.log(err);
+          })
+        }
       }
       else{
         var i = this.form1[this.drawerInfo].iouIdList.indexOf(iou);
@@ -948,29 +1100,41 @@ export default {
     },
     addIouSubmit(){
       //提交新增的借据
-      let send_data = [];
-      for(let i=0;i<this.form1[this.drawerInfo].iouIdList.length;i++){
-        if(!this.form1[this.drawerInfo].iouIdList[i].isorigin){
-          send_data.push({
-            iouId:this.form1[this.drawerInfo].iouIdList[i].value,
-            guaranteeId:this.form1[this.drawerInfo].guaranteeId,
-            guaranteeMethod:this.form1[this.drawerInfo].guaranteeMethod,
-            note:this.form1[this.drawerInfo].note,
-            deleteFlag:0
+      this.$refs['form1'].validate((valid) => {
+        if(valid){
+          let send_data = [];
+          for(let i=0;i<this.form1[this.drawerInfo].iouIdList.length;i++){
+            if(!this.form1[this.drawerInfo].iouIdList[i].isorigin){
+              send_data.push({
+                iouId:this.form1[this.drawerInfo].iouIdList[i].value,
+                guaranteeId:this.form1[this.drawerInfo].guaranteeId,
+                guaranteeMethod:this.form1[this.drawerInfo].guaranteeMethod,
+                note:this.form1[this.drawerInfo].note,
+                deleteFlag:0
+              })
+            }
+          }
+          api({
+            url: "/Secure/addIouId",
+            method: "post",
+            data:send_data
+          }).then(data => {
+            console.log(data);
+            if(data.data.success){
+              location.reload()
+            }
+            else{
+              this.$message(data.data.msg)
+            }
+          }).catch(err => {
+            console.log(err);
           })
         }
-      }
-      api({
-        url: "/Secure/addIouId",
-        method: "post",
-        data:send_data
-      }).then(data => {
-        // console.log(data);
-        // this.$router.replace('/creditInfo/creditFinfo/creditMenu');
-        location.reload();
-      }).catch(err => {
-        console.log(err);
+        else{
+          console.log('err submit')
+        }
       })
+
 
     },
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -990,118 +1154,127 @@ export default {
       this.activeNames=[this.form1.assuranceInfo.assuranceList.length-1];
     },
     addCollateraOrPledgeSubmit(){
-      if(this.methodNum==='0'){
-        let send_data = [];
-        for(let i=0;i<this.form1.collateralInfo.collateralList.length;i++){
-          if(!this.form1.collateralInfo.collateralList[i].isorigin){
-            let guarantors = '';
-            for(let j=0;j<this.form1.collateralInfo.collateralList[i].guarantorList.length;j++){
-              if(j===0){
-                guarantors += String(this.form1.collateralInfo.collateralList[i].guarantorList[j].value)
-              }
-              else{
-                guarantors += "," + String(this.form1.collateralInfo.collateralList[i].guarantorList[j].value)
+      this.$refs['form1'].validate((valid) => {
+        if(valid){
+          if(this.methodNum==='0'){
+            let send_data = [];
+            for(let i=0;i<this.form1.collateralInfo.collateralList.length;i++){
+              if(!this.form1.collateralInfo.collateralList[i].isorigin){
+                let guarantors = '';
+                for(let j=0;j<this.form1.collateralInfo.collateralList[i].guarantorList.length;j++){
+                  if(j===0){
+                    guarantors += String(this.form1.collateralInfo.collateralList[i].guarantorList[j].value)
+                  }
+                  else{
+                    guarantors += "," + String(this.form1.collateralInfo.collateralList[i].guarantorList[j].value)
+                  }
+                }
+                send_data.push({
+                  guaranteeId:this.form1.collateralInfo.guaranteeId,
+                  collateralName:this.form1.collateralInfo.collateralList[i].collateralName,
+                  collateralLocation:this.form1.collateralInfo.collateralList[i].collateralLocation,
+                  landArea:this.form1.collateralInfo.collateralList[i].landArea,
+                  propertySize:this.form1.collateralInfo.collateralList[i].propertySize,
+                  appraisedValue:this.form1.collateralInfo.collateralList[i].appraisedValue,
+                  registrationAmount:this.form1.collateralInfo.collateralList[i].registrationAmount,
+                  collateralType:this.form1.collateralInfo.collateralList[i].collateralType,
+                  landType:this.form1.collateralInfo.collateralList[i].landType,
+                  reminderDay:this.form1.collateralInfo.collateralList[i].reminderDay,
+                  guaranteeStartDate:this.form1.collateralInfo.collateralList[i].guaranteeStartDate,
+                  guaranteeEndDate:this.form1.collateralInfo.collateralList[i].guaranteeEndDate,
+                  guarantor:guarantors,
+                })
               }
             }
-            send_data.push({
-              guaranteeId:this.form1.collateralInfo.guaranteeId,
-              collateralName:this.form1.collateralInfo.collateralList[i].collateralName,
-              collateralLocation:this.form1.collateralInfo.collateralList[i].collateralLocation,
-              landArea:this.form1.collateralInfo.collateralList[i].landArea,
-              propertySize:this.form1.collateralInfo.collateralList[i].propertySize,
-              appraisedValue:this.form1.collateralInfo.collateralList[i].appraisedValue,
-              registrationAmount:this.form1.collateralInfo.collateralList[i].registrationAmount,
-              collateralType:this.form1.collateralInfo.collateralList[i].collateralType,
-              landType:this.form1.collateralInfo.collateralList[i].landType,
-              reminderDay:this.form1.collateralInfo.collateralList[i].reminderDay,
-              guaranteeStartDate:this.form1.collateralInfo.collateralList[i].guaranteeStartDate,
-              guaranteeEndDate:this.form1.collateralInfo.collateralList[i].guaranteeEndDate,
-              guarantor:guarantors,
+            api({
+              url: "/Secure/addCollateral",
+              method: "post",
+              data:send_data
+            }).then(data => {
+              // console.log(data);
+              // this.$router.replace('/creditInfo/creditFinfo/creditMenu');
+              location.reload();
+            }).catch(err => {
+              console.log(err);
+            })
+          }
+          else if(this.methodNum==='1'){
+            let send_data = [];
+            for(let i=0;i<this.form1.pledgesInfo.pledgesList.length;i++){
+              if(!this.form1.pledgesInfo.pledgesList[i].isorigin){
+                let guarantors = '';
+                for(let j=0;j<this.form1.pledgesInfo.pledgesList[i].guarantorList.length;j++){
+                  if(j===0){
+                    guarantors += String(this.form1.pledgesInfo.pledgesList[i].guarantorList[j].value)
+                  }
+                  else{
+                    guarantors += "," + String(this.form1.pledgesInfo.pledgesList[i].guarantorList[j].value)
+                  }
+                }
+                send_data.push({
+                  guaranteeId:this.form1.pledgesInfo.guaranteeId,
+                  pledgesName:this.form1.pledgesInfo.pledgesList[i].pledgesName,
+                  pledgesValue:this.form1.pledgesInfo.pledgesList[i].pledgesValue,
+                  pledgesType:this.form1.pledgesInfo.pledgesList[i].pledgesType,
+                  reminderDay:this.form1.pledgesInfo.pledgesList[i].reminderDay,
+                  guaranteeStartDate:this.form1.pledgesInfo.pledgesList[i].guaranteeStartDate,
+                  guaranteeEndDate:this.form1.pledgesInfo.pledgesList[i].guaranteeEndDate,
+                  guarantor:guarantors,
+                })
+              }
+            }
+            api({
+              url: "/Secure/addPledges",
+              method: "post",
+              data:send_data
+            }).then(data => {
+              // console.log(data);
+              // this.$router.replace('/creditInfo/creditFinfo/creditMenu');
+              location.reload();
+            }).catch(err => {
+              console.log(err);
+            })
+          }
+          else if(this.methodNum==='2') {
+            let send_data = [];
+            for (let i = 0; i < this.form1.assuranceInfo.assuranceList.length; i++) {
+              if (!this.form1.assuranceInfo.assuranceList[i].isorigin) {
+                let guarantors = '';
+                for (let j = 0; j < this.form1.assuranceInfo.assuranceList[i].guarantorList.length; j++) {
+                  if (j === 0) {
+                    guarantors += String(this.form1.assuranceInfo.assuranceList[i].guarantorList[j].value)
+                  } else {
+                    guarantors += "," + String(this.form1.assuranceInfo.assuranceList[i].guarantorList[j].value)
+                  }
+                }
+                send_data.push({
+                  guaranteeId: this.form1.assuranceInfo.guaranteeId,
+                  reminderDay: this.form1.assuranceInfo.assuranceList[i].reminderDay,
+                  guaranteeStartDate: this.form1.assuranceInfo.assuranceList[i].guaranteeStartDate,
+                  guaranteeEndDate: this.form1.assuranceInfo.assuranceList[i].guaranteeEndDate,
+                  guarantor: guarantors,
+                })
+              }
+            }
+            api({
+              url: "/Secure/addAssurance",
+              method: "post",
+              data: send_data
+            }).then(data => {
+              // console.log(data);
+              // this.$router.replace('/creditInfo/creditFinfo/creditMenu');
+              location.reload();
+            }).catch(err => {
+              console.log(err);
             })
           }
         }
-        api({
-          url: "/Secure/addCollateral",
-          method: "post",
-          data:send_data
-        }).then(data => {
-          // console.log(data);
-          // this.$router.replace('/creditInfo/creditFinfo/creditMenu');
-          location.reload();
-        }).catch(err => {
-          console.log(err);
-        })
-      }
-      else if(this.methodNum==='1'){
-        let send_data = [];
-        for(let i=0;i<this.form1.pledgesInfo.pledgesList.length;i++){
-          if(!this.form1.pledgesInfo.pledgesList[i].isorigin){
-            let guarantors = '';
-            for(let j=0;j<this.form1.pledgesInfo.pledgesList[i].guarantorList.length;j++){
-              if(j===0){
-                guarantors += String(this.form1.pledgesInfo.pledgesList[i].guarantorList[j].value)
-              }
-              else{
-                guarantors += "," + String(this.form1.pledgesInfo.pledgesList[i].guarantorList[j].value)
-              }
-            }
-            send_data.push({
-              guaranteeId:this.form1.pledgesInfo.guaranteeId,
-              pledgesName:this.form1.pledgesInfo.pledgesList[i].pledgesName,
-              pledgesValue:this.form1.pledgesInfo.pledgesList[i].pledgesValue,
-              pledgesType:this.form1.pledgesInfo.pledgesList[i].pledgesType,
-              reminderDay:this.form1.pledgesInfo.pledgesList[i].reminderDay,
-              guaranteeStartDate:this.form1.pledgesInfo.pledgesList[i].guaranteeStartDate,
-              guaranteeEndDate:this.form1.pledgesInfo.pledgesList[i].guaranteeEndDate,
-              guarantor:guarantors,
-            })
-          }
+        else{
+          console.log('err submit')
+          return false;
         }
-        api({
-          url: "/Secure/addPledges",
-          method: "post",
-          data:send_data
-        }).then(data => {
-          // console.log(data);
-          // this.$router.replace('/creditInfo/creditFinfo/creditMenu');
-          location.reload();
-        }).catch(err => {
-          console.log(err);
-        })
-      }
-      else if(this.methodNum==='2') {
-        let send_data = [];
-        for (let i = 0; i < this.form1.assuranceInfo.assuranceList.length; i++) {
-          if (!this.form1.assuranceInfo.assuranceList[i].isorigin) {
-            let guarantors = '';
-            for (let j = 0; j < this.form1.assuranceInfo.assuranceList[i].guarantorList.length; j++) {
-              if (j === 0) {
-                guarantors += String(this.form1.assuranceInfo.assuranceList[i].guarantorList[j].value)
-              } else {
-                guarantors += "," + String(this.form1.assuranceInfo.assuranceList[i].guarantorList[j].value)
-              }
-            }
-            send_data.push({
-              guaranteeId: this.form1.assuranceInfo.guaranteeId,
-              reminderDay: this.form1.assuranceInfo.assuranceList[i].reminderDay,
-              guaranteeStartDate: this.form1.assuranceInfo.assuranceList[i].guaranteeStartDate,
-              guaranteeEndDate: this.form1.assuranceInfo.assuranceList[i].guaranteeEndDate,
-              guarantor: guarantors,
-            })
-          }
-        }
-        api({
-          url: "/Secure/addAssurance",
-          method: "post",
-          data: send_data
-        }).then(data => {
-          // console.log(data);
-          // this.$router.replace('/creditInfo/creditFinfo/creditMenu');
-          location.reload();
-        }).catch(err => {
-          console.log(err);
-        })
-      }
+      })
+
     },
     removeInfo(info){
       if(info.isorigin){
@@ -1124,6 +1297,15 @@ export default {
           this.form1[this.drawerInfo][this.ListInfoType].splice(i, 1);
         }
       }
+    },
+    newGuarantee(){
+      let newpage = this.$router.resolve({
+        path: '/creditInfo/SMortgage',
+        query:{
+          creditList:JSON.stringify([this.query_iou])
+        }
+      })
+      window.open(newpage.href, '_blank');
     }
   }
 }
@@ -1174,6 +1356,7 @@ export default {
   padding: 0;
 }
 
+
 /deep/ .el-drawer{
   /*padding-top: 80px;*/
   /*background-color: #55efc4;*/
@@ -1187,6 +1370,7 @@ export default {
   margin-bottom: 0px;
   padding: 20px 20px 0;
 }
+
 
 /deep/ .el-input__inner{
   /*background-color: #55efc4;*/
@@ -1226,6 +1410,7 @@ export default {
   display: flex;
   justify-content: center;
   /*color: #409eff;*/
+
   /*font-weight: 300;*/
 }
 
@@ -1239,10 +1424,12 @@ export default {
 
 .el-collapse >>> .el-collapse-item__arrow{
   margin: 0 8px 0 5px;
+
 }
 
 /deep/ .el-card{
   margin:10px 40px 10px 40px;
+
 }
 
 /deep/ .el-card__body{

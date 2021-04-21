@@ -3,7 +3,7 @@
     <el-form ref="form" :rules="rules" :model="form" label-width="80px" class="register-box">
       <h3 class="register-title">用户注册</h3>
       <el-form-item label="用户名" prop="name">
-        <el-input v-model="form.name"></el-input>
+        <el-input v-model="form.name" type="text"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password">
         <el-input type="password" v-model="form.password"></el-input>
@@ -11,13 +11,12 @@
       <el-form-item label="确认密码" prop="conpassword">
         <el-input type="password" v-model="form.conpassword"></el-input>
       </el-form-item>
-      <el-form-item label="性别：" prop="sex">
-        <el-radio v-model="sex" label="1" border>男</el-radio>
-        <el-radio v-model="sex" label="2" border>女</el-radio>
-      </el-form-item>
       <el-form-item label="身份：" prop="authentic">
-        <el-radio v-model="au" label="1" border>管理员</el-radio>
-        <el-radio v-model="au" label="2" border>普通用户</el-radio>
+        <el-radio v-model="form.au" label="1" border>管理员</el-radio>
+        <el-radio v-model="form.au" label="2" border>普通用户</el-radio>
+      </el-form-item>
+      <el-form-item label="手机" prop="phone">
+        <el-input v-model="form.phone"  v-enter-number></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="back">返回登录</el-button>
@@ -28,6 +27,8 @@
 </template>
 
 <script>
+import {default as api} from "@/utils/api";
+
 export default {
   name: 'Register',
   data () {
@@ -43,12 +44,13 @@ export default {
       }
     }
     return {
-      sex: '1',
-      au: '1',
+
       form: {
         name: '',
         password: '',
-        conpassword: ''
+        conpassword: '',
+        au: '1',
+        phone:''
       },
       rules: {
         name: [
@@ -58,9 +60,9 @@ export default {
             trigger: 'blur'
           },
           {
-            min: 3,
-            max: 50,
-            message: '长度在 3 到 20 个字符',
+            min: 1,
+            max: 20,
+            message: '长度在 1 到 20 个字符',
             trigger: 'blur'
           }
         ],
@@ -72,7 +74,7 @@ export default {
           },
           {
             min: 6,
-            max: 20,
+            max: 50,
             message: '长度在 6 个字符以上',
             trigger: 'blur'
           }
@@ -85,12 +87,25 @@ export default {
           },
           {
             min: 6,
-            max: 20,
+            max: 50,
             message: '长度在 6 个字符以上',
             trigger: 'blur'
           },
           {
             validator: validatePassword,
+            trigger: 'blur'
+          }
+        ],
+        phone: [
+          {
+            required: true,
+            message: '手机号码不能为空',
+            trigger: 'blur'
+          },
+          {
+            min: 11,
+            max: 11,
+            message: '请输入正确的手机号',
             trigger: 'blur'
           }
         ]
@@ -101,16 +116,43 @@ export default {
     onRegist (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          var _this = this;
 
-          this.$router.push({ name: 'Login' })
+          api({
+            url: "/user/userRegister",
+            method: "post",
+            data:{
+              username:_this.form.name,
+              password:_this.form.password,
+              perm:_this.form.au,
+              phone:_this.form.phone
+            }
+          }).then(data => {
+            if(data.data.datas==='用户名已存在！'){
+              this.$message({
+                type:"error",
+                message:'用户名已存在！'
+              })
+            }else {
+              console.log(data);
+              this.$message({type:"success", message:"注册成功！"});
+              this.$router.push({ name: 'Login' });
+            }
+          }).catch(err => {
+            console.log(err);
+          })
+
         } else {
-          alert('error register!!')
+          this.$message({
+            showClose: true,
+            message: '注册失败',
+            type: 'error'})
           return false
         }
       })
     },
     back () {
-      this.$router.push('/')
+      this.$router.push('/Login')
     }
   }
 }

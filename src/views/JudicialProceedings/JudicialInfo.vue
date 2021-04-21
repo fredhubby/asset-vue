@@ -1,584 +1,365 @@
 <template>
   <div>
     <el-breadcrumb separator="/">
-      <el-breadcrumb-item to="/Main"><i class="el-icon-s-home"></i></el-breadcrumb-item>
+      <el-breadcrumb-item to="/timeRemider"><i class="el-icon-s-home"></i></el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">司法诉讼</el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">司法信息录入</el-breadcrumb-item>
     </el-breadcrumb>
     <el-row class="el-row1">
       <el-col :span="24">
         <div class="grid-content">
-          <el-dropdown trigger="click" style="margin-right: 10px">
-            <el-button type="primary">
-              状态更新<i class="el-icon-arrow-down el-icon--right"></i>
+          <el-button type="primary">清空</el-button>
+          <el-popconfirm
+              title="确定提交？"
+              @confirm="submit">
+            <el-button
+                type="primary"
+                slot="reference"
+                style="margin-left: 20px">
+              提交
             </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="first++" :disabled="first==1">新增一审信息</el-dropdown-item>
-              <el-dropdown-item @click.native="second++" :disabled="((first==0)||(second==2))">新增二审信息</el-dropdown-item>
-              <el-dropdown-item @click.native="third++" :disabled="((first==0)||(second==1)||(third==3))">新增再审信息</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-          <el-button @click="reset('form1')">清空</el-button>
-          <el-button>保存</el-button>
-          <el-button type="primary">保存并提交</el-button>
+          </el-popconfirm>
         </div>
       </el-col>
     </el-row>
 
-    <el-form style="margin-top: 15px" ref="form1" :model="form1">
-      <span class="span1">诉前阶段</span>
-      <el-form-item>
-        <el-row style="margin-top: 15px">
-          <el-col :span="2"><div class="grid-content1" >借款到期日：</div></el-col>
-          <el-col :span="7"><div class="grid-content2" style="text-align: start">
-            <el-date-picker
-                v-model="form1.value1"
-                align="right"
-                type="date"
-                placeholder="选择日期"
-                :picker-options="pickerOptions">
-            </el-date-picker>
-          </div></el-col>
-          <el-col :span="2"><div class="grid-content1">保证期限：</div></el-col>
-          <el-col :span="7"><div class="grid-content2" style="text-align: start">
-            <el-date-picker
-                v-model="form1.value2"
-                align="right"
-                type="date"
-                placeholder="选择日期"
-                :picker-options="pickerOptions">
-            </el-date-picker>
-          </div></el-col>
-        </el-row>
-<!--      </el-form-item>-->
-<!--      <el-form-item>-->
-        <el-row class="el-row3">
-          <el-col :span="2"><div class="grid-content1">担保期限：</div></el-col>
-            <el-col :span="7"><div class="grid-content2" style="text-align: start">
-              <el-date-picker
-                  v-model="form1.value3"
-                  align="right"
-                  type="date"
-                  placeholder="选择日期"
-                  :picker-options="pickerOptions">
-              </el-date-picker>
-            </div></el-col>
-            <el-col :span="2"><div class="grid-content1" >备注：</div></el-col>
-            <el-col :span="7"><div class="grid-content2">
-              <el-input v-model="form1.value4" clearable
-                        type="textarea"
-                        autosize
-                        maxlength="100"></el-input>
-            </div></el-col>
-        </el-row>
-<!--      </el-form-item>-->
-<!--      <el-form-item>-->
-        <el-row class="el-row4">
-          <el-col :span="2"><div class="grid-content1" >借据号：</div></el-col>
-          <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value5" clearable></el-input></div></el-col>
-        </el-row>
+    <el-form label-width="130px" style="margin-top: 50px" :rules="rules" :model="form" ref="form">
+      <el-form-item label="之前司法状态">
+        <el-select v-model="form.prejudicialStatusName" clearable filterable placeholder="" style="width: 30%" :disabled="true">
+          <el-option
+              v-for="item in judicalState_options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+          </el-option>
+        </el-select>
+<!--        <el-input v-model="form.prejudicialStatusName" style="width: 30%" :disabled="true"></el-input>-->
+      </el-form-item>
+      <el-form-item label="司法状态" prop="judicialStatusName">
+        <el-select v-model="form.judicialStatusName" clearable filterable placeholder="请选择" style="width: 30%">
+          <el-option
+              v-for="item in judicalState_options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+          </el-option>
+        </el-select>
+<!--        <el-input v-model="form.judicialStatusName" style="width: 30%"></el-input>-->
+      </el-form-item>
+      <el-form-item label="创建日期" prop="statusGenerationDate">
+        <el-date-picker
+            v-model="form.statusGenerationDate"
+            type="date"
+            placeholder="选择日期"
+            style="width: 30%"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd">
+        </el-date-picker>
       </el-form-item>
 
-      <div v-if="first==1">
       <el-divider></el-divider>
-        <span class="span">一审审理</span>
-        <el-form-item style="margin-top: 15px">
-          <el-row class="el-row5">
-            <el-col :span="2"><div class="grid-content1" >案号：</div></el-col>
-            <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value6" clearable></el-input></div></el-col>
-            <el-col :span="2"><div class="grid-content1" >审理法院：</div></el-col>
-            <el-col :span="7"><div class="grid-content2">
-              <el-select v-model="form1.value7"  clearable>
-                <el-option
-                    v-for="item in options1"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                </el-option>
-              </el-select>
-            </div></el-col>
-          </el-row>
-          <el-row class="el-row6">
-            <el-col :span="2"><div class="grid-content1" >审理法官：</div></el-col>
-            <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value8" clearable></el-input></div></el-col>
-            <el-col :span="2"><div class="grid-content1" >备注：</div></el-col>
-            <el-col :span="7"><div class="grid-content2">
-              <el-input v-model="form1.value9" clearable
-                        type="textarea"
-                        autosize
-                        maxlength="100">
-              </el-input></div></el-col>
-          </el-row>
-        </el-form-item>
-        <span class="span2">一审审理对象</span>
-        <div>
-          <div v-for="(iou,index) in formLabelAlign.iou"
-               :key="iou.key" style="margin-top: 20px">
-            <el-row :gutter="30">
-              <el-col :span="9" :offset="1">
-                <el-form-item :label="'借据号'+(index+1)+'：'" class="form_item">
-                  <el-input v-model="iou.value" clearable style="width: 80%"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="2">
-                <el-button @click.prevent="removeIou(iou)" type="danger">删除</el-button>
-              </el-col>
-            </el-row>
-          </div>
-          <el-form-item style="margin-left: 20%">
-            <el-button type="primary" @click="addIou">新增借据</el-button>
-            <el-button @click="resetIou">重置</el-button>
-          </el-form-item>
-        </div>
-        <el-divider></el-divider>
-        <span class="span1">一审判决中</span>
-        <el-form-item style="margin-top: 15px">
-          <el-row class="el-row7">
-            <el-col :span="2"><div class="grid-content1" >生效期：</div></el-col>
-            <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value10" placeholder="15" clearable></el-input></div></el-col>
-            <el-col :span="2"><div class="grid-content1" >判决生效日：</div></el-col>
-            <el-col :span="7"><div class="grid-content2" style="text-align: start">
-              <el-date-picker
-                  v-model="form1.value11"
-                  align="right"
-                  type="date"
-                  placeholder="选择日期"
-                  :picker-options="pickerOptions">
-              </el-date-picker>
-            </div></el-col>
-          </el-row>
-          <el-row class="el-row8">
-            <el-col :span="2"><div class="grid-content1" >申请截止日：</div></el-col>
-            <el-col :span="7"><div class="grid-content2" style="text-align: start">
-              <el-date-picker
-                  v-model="form1.value12"
-                  align="right"
-                  type="date"
-                  placeholder="选择日期"
-                  :picker-options="pickerOptions">
-              </el-date-picker>
-            </div></el-col>
-            <el-col :span="2"><div class="grid-content1" >备注：</div></el-col>
-            <el-col :span="7"><div class="grid-content2">
-              <el-input v-model="form1.value13"
-                        clearable
-                        type="textarea"
-                        autosize
-                        maxlength="100">
-              </el-input></div></el-col>
-          </el-row>
-        </el-form-item>
-        <el-divider></el-divider>
-        <span class="span1">申请执行</span>
-        <el-form-item style="margin-top: 15px">
-          <el-row class="el-row7">
-            <el-col :span="3"><div class="grid-content1" >执行时效：</div></el-col>
-            <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value14" clearable></el-input></div></el-col>
-            <el-col :span="3"><div class="grid-content1" >申请执行日：</div></el-col>
-            <el-col :span="7"><div class="grid-content2" style="text-align: start">
-              <el-date-picker
-                  v-model="form1.value15"
-                  align="right"
-                  type="date"
-                  placeholder="选择日期"
-                  :picker-options="pickerOptions">
-              </el-date-picker>
-            </div></el-col>
-          </el-row>
-          <el-row class="el-row8">
-            <el-col :span="3"><div class="grid-content1" >执行时效截止日：</div></el-col>
-            <el-col :span="7"><div class="grid-content2" style="text-align: start">
-              <el-date-picker
-                  v-model="form1.value16"
-                  align="right"
-                  type="date"
-                  placeholder="选择日期"
-                  :picker-options="pickerOptions">
-              </el-date-picker>
-            </div></el-col>
-            <el-col :span="3"><div class="grid-content1" >备注：</div></el-col>
-            <el-col :span="7"><div class="grid-content2">
-              <el-input v-model="form1.value17"
-                        clearable
-                        type="textarea"
-                        autosize
-                        maxlength="100">
-              </el-input></div></el-col>
-          </el-row>
-        </el-form-item>
-        <el-button type="danger" style="margin-left: 40%;" @click="delFirst">删除一审信息</el-button>
-      </div>
+      <span style="font-family: 黑体;font-size: 18px">借据号</span>
+      <el-form-item
+          v-for="(iou, index) in form.iouIdList"
+          :label="'借据号' + index"
+          :key="iou.key"
+          :prop="'iouIdList.'+index+'.value'"
+          :rules="{required:true,message:'不允许为空',trigger:['change','blur']}"
+          style="margin-top: 20px;margin-left: 200px">
+        <el-input v-model="iou.value" style="width: 30%" :disabled="Boolean(addState==='1')"></el-input>
+        <el-button
+            v-if="addState==='0'"
+            @click.prevent="removeIou(iou)"
+            icon="el-icon-delete"
+            circle
+            type="danger"
+            style="margin-left: 20px">
+        </el-button>
+      </el-form-item>
+      <el-form-item style="margin-left: 200px" v-if="addState==='0'">
+        <el-button type="primary" @click="addIou">新增借据</el-button>
+      </el-form-item>
 
-      <div v-if="second==2">
-        <el-divider>二审审理</el-divider>
-        <span class="span">二审审理</span>
-        <el-form-item style="margin-top: 15px">
-          <el-row class="el-row5">
-            <el-col :span="2"><div class="grid-content1" >案号：</div></el-col>
-            <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value18" clearable></el-input></div></el-col>
-            <el-col :span="2"><div class="grid-content1" >审理法院：</div></el-col>
-            <el-col :span="7"><div class="grid-content2">
-              <el-select v-model="form1.value19"  clearable>
-                <el-option
-                    v-for="item in options1"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                </el-option>
-              </el-select>
-            </div></el-col>
-          </el-row>
-          <el-row class="el-row6">
-            <el-col :span="2"><div class="grid-content1" >审理法官：</div></el-col>
-            <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value20" clearable></el-input></div></el-col>
-            <el-col :span="2"><div class="grid-content1" >备注：</div></el-col>
-            <el-col :span="7"><div class="grid-content2">
-              <el-input v-model="form1.value21" clearable type="textarea"
-                        autosize
-                        maxlength="100">
-              </el-input></div></el-col>
-          </el-row>
-        </el-form-item>
-        <span class="span2">二审审理对象</span>
-        <div>
-          <div v-for="(iou,index) in formLabelAlign.iou"
-               :key="iou.key" style="margin-top: 20px">
-            <el-row :gutter="30">
-              <el-col :span="9" :offset="1">
-                <el-form-item :label="'借据号'+(index+1)+'：'" class="form_item">
-                  <el-input v-model="iou.value" clearable style="width: 80%"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="2">
-                <el-button @click.prevent="removeIou(iou)" type="danger">删除</el-button>
-              </el-col>
-            </el-row>
-          </div>
-          <el-form-item style="margin-left: 20%">
-            <el-button type="primary" @click="addIou">新增借据</el-button>
-            <el-button @click="resetIou">重置</el-button>
-          </el-form-item>
-        </div>
+      <div>
         <el-divider></el-divider>
-        <span class="span1">二审判决中</span>
-        <el-form-item style="margin-top: 15px">
-          <el-row class="el-row7">
-            <el-col :span="2"><div class="grid-content1" >生效期：</div></el-col>
-            <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value22" placeholder="15" clearable></el-input></div></el-col>
-            <el-col :span="2"><div class="grid-content1" >判决生效日：</div></el-col>
-            <el-col :span="7"><div class="grid-content2" style="text-align: start">
-              <el-date-picker
-                  v-model="form1.value23"
-                  align="right"
-                  type="date"
-                  placeholder="选择日期"
-                  :picker-options="pickerOptions">
-              </el-date-picker>
-            </div></el-col>
-          </el-row>
-          <el-row class="el-row8">
-            <el-col :span="2"><div class="grid-content1" >申请截止日：</div></el-col>
-            <el-col :span="7"><div class="grid-content2" style="text-align: start">
-              <el-date-picker
-                  v-model="form1.value24"
-                  align="right"
-                  type="date"
-                  placeholder="选择日期"
-                  :picker-options="pickerOptions">
-              </el-date-picker>
-            </div></el-col>
-            <el-col :span="2"><div class="grid-content1" >备注：</div></el-col>
-            <el-col :span="7"><div class="grid-content2">
-              <el-input v-model="form1.value25" clearable type="textarea"
-                        autosize
-                        maxlength="100">
-              </el-input></div></el-col>
-          </el-row>
+        <span style="font-size: 15px; font-weight: bold; margin-left:20px; margin-bottom:20px; display:inline-block">案号信息</span>
+        <el-form-item label="案号" prop="caseId">
+          <el-input v-model="form.caseId" style="width: 30%"></el-input>
         </el-form-item>
-        <el-divider></el-divider>
-        <span class="span1">申请执行</span>
-        <el-form-item style="margin-top: 15px">
-          <el-row class="el-row7">
-            <el-col :span="3"><div class="grid-content1" >执行时效：</div></el-col>
-            <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value26" clearable></el-input></div></el-col>
-            <el-col :span="3"><div class="grid-content1" >申请执行日：</div></el-col>
-            <el-col :span="7"><div class="grid-content2" style="text-align: start">
-              <el-date-picker
-                  v-model="form1.value27"
-                  align="right"
-                  type="date"
-                  placeholder="选择日期"
-                  :picker-options="pickerOptions">
-              </el-date-picker>
-            </div></el-col>
-          </el-row>
-          <el-row class="el-row8">
-            <el-col :span="3"><div class="grid-content1" >执行时效截止日：</div></el-col>
-            <el-col :span="7"><div class="grid-content2" style="text-align: start">
-              <el-date-picker
-                  v-model="form1.value28"
-                  align="right"
-                  type="date"
-                  placeholder="选择日期"
-                  :picker-options="pickerOptions">
-              </el-date-picker>
-            </div></el-col>
-            <el-col :span="3"><div class="grid-content1" >备注：</div></el-col>
-            <el-col :span="7"><div class="grid-content2">
-              <el-input v-model="form1.value29" clearable type="textarea"
-                        autosize
-                        maxlength="100">
-              </el-input></div></el-col>
-          </el-row>
+        <el-form-item label="法院" prop="court">
+          <el-select v-model="form.court" clearable filterable placeholder="请选择" style="width: 30%">
+            <el-option
+                v-for="item in court_options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
-        <el-button type="danger" style="margin-left: 40%;" @click="delSecond">删除二审信息</el-button>
+        <el-form-item label="承办法官" prop="chargeJudge">
+          <el-input v-model="form.chargeJudge" style="width: 30%"></el-input>
+        </el-form-item>
+        <el-form-item label="受托律所" prop="entrustedLawFirm">
+          <el-select v-model="form.entrustedLawFirm" clearable filterable placeholder="请选择" style="width: 30%">
+            <el-option
+                v-for="item in firm_options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="律师" prop="layer">
+          <el-input v-model="form.layer" style="width: 30%"></el-input>
+        </el-form-item>
+        <el-form-item label="备注" prop="remarks">
+          <el-input v-model="form.remarks" style="width: 30%"></el-input>
+        </el-form-item>
       </div>
-
-      <div v-if="third==3">
-        <el-divider>再审审理</el-divider>
-        <span class="span">再审审理</span>
-        <el-form-item style="margin-top: 15px">
-          <el-row class="el-row5">
-            <el-col :span="2"><div class="grid-content1" >案号：</div></el-col>
-            <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value30" clearable></el-input></div></el-col>
-            <el-col :span="2"><div class="grid-content1" >审理法院：</div></el-col>
-            <el-col :span="7"><div class="grid-content2">
-              <el-select v-model="form1.value31"  clearable>
-                <el-option
-                    v-for="item in options1"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                </el-option>
-              </el-select>
-            </div></el-col>
-          </el-row>
-          <el-row class="el-row6">
-            <el-col :span="2"><div class="grid-content1" >审理法官：</div></el-col>
-            <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value32" clearable></el-input></div></el-col>
-            <el-col :span="2"><div class="grid-content1" >备注：</div></el-col>
-            <el-col :span="7"><div class="grid-content2">
-              <el-input v-model="form1.value33" clearable type="textarea"
-                        autosize
-                        maxlength="100">
-              </el-input></div></el-col>
-          </el-row>
-        </el-form-item>
-        <span class="span2">再审审理对象</span>
-        <div>
-          <div v-for="(iou,index) in formLabelAlign.iou"
-               :key="iou.key" style="margin-top: 20px">
-            <el-row :gutter="30">
-              <el-col :span="9" :offset="1">
-                <el-form-item :label="'借据号'+(index+1)+'：'" class="form_item">
-                  <el-input v-model="iou.value" clearable style="width: 80%"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="2">
-                <el-button @click.prevent="removeIou(iou)" type="danger">删除</el-button>
-              </el-col>
-            </el-row>
-          </div>
-          <el-form-item style="margin-left: 20%">
-            <el-button type="primary" @click="addIou">新增借据</el-button>
-            <el-button @click="resetIou">重置</el-button>
-          </el-form-item>
-        </div>
-        <el-divider></el-divider>
-        <span class="span1">再审判决中</span>
-        <el-form-item style="margin-top: 15px">
-          <el-row class="el-row7">
-            <el-col :span="2"><div class="grid-content1" >生效期：</div></el-col>
-            <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value34" placeholder="15" clearable></el-input></div></el-col>
-            <el-col :span="2"><div class="grid-content1" >判决生效日：</div></el-col>
-            <el-col :span="7"><div class="grid-content2" style="text-align: start">
-              <el-date-picker
-                  v-model="form1.value35"
-                  align="right"
-                  type="date"
-                  placeholder="选择日期"
-                  :picker-options="pickerOptions">
-              </el-date-picker>
-            </div></el-col>
-          </el-row>
-          <el-row class="el-row8">
-            <el-col :span="2"><div class="grid-content1" >申请截止日：</div></el-col>
-            <el-col :span="7"><div class="grid-content2" style="text-align: start">
-              <el-date-picker
-                  v-model="form1.value36"
-                  align="right"
-                  type="date"
-                  placeholder="选择日期"
-                  :picker-options="pickerOptions">
-              </el-date-picker>
-            </div></el-col>
-            <el-col :span="2"><div class="grid-content1" >备注：</div></el-col>
-            <el-col :span="7"><div class="grid-content2">
-              <el-input v-model="form1.value37" clearable type="textarea"
-                        autosize
-                        maxlength="100">
-              </el-input></div></el-col>
-          </el-row>
-        </el-form-item>
-        <el-divider></el-divider>
-        <span class="span1">申请执行</span>
-        <el-form-item style="margin-top: 15px">
-          <el-row class="el-row7">
-            <el-col :span="3"><div class="grid-content1" >执行时效：</div></el-col>
-            <el-col :span="7"><div class="grid-content2"><el-input v-model="form1.value38" clearable></el-input></div></el-col>
-            <el-col :span="3"><div class="grid-content1" >申请执行日：</div></el-col>
-            <el-col :span="7"><div class="grid-content2" style="text-align: start">
-              <el-date-picker
-                  v-model="form1.value39"
-                  align="right"
-                  type="date"
-                  placeholder="选择日期"
-                  :picker-options="pickerOptions">
-              </el-date-picker>
-            </div></el-col>
-          </el-row>
-          <el-row class="el-row8">
-            <el-col :span="3"><div class="grid-content1" >执行时效截止日：</div></el-col>
-            <el-col :span="7"><div class="grid-content2" style="text-align: start">
-              <el-date-picker
-                  v-model="form1.value40"
-                  align="right"
-                  type="date"
-                  placeholder="选择日期"
-                  :picker-options="pickerOptions">
-              </el-date-picker>
-            </div></el-col>
-            <el-col :span="3"><div class="grid-content1" >备注：</div></el-col>
-            <el-col :span="7"><div class="grid-content2">
-              <el-input v-model="form1.value41" clearable
-                        type="textarea"
-                        autosize
-                        maxlength="100"></el-input>
-            </div></el-col>
-          </el-row>
-        </el-form-item>
-        <el-button type="danger" style="margin-left: 40%;" @click="delThird">删除再审信息</el-button>
-      </div>
-
     </el-form>
   </div>
 </template>
 
 <script>
+import {default as api} from "@/utils/api";
+
 export default {
   name: "JudicialInfo",
   data(){
     return{
-      first:1,
-      second:1,
-      third:2,
-      temp_iouId:0,
-      form1:{
-        value1:'',
-        value2:'',
-        value3:'',
-        value4:'',
-        value5:'',
-        value6:'',
-        value7:'',
-        value8:'',
-        value9:'',
-        value10:'15天',
-        value11:'',
-        value12:'',
-        value13:'',
-        value14:'2年',
-        value15:'',
-        value16:'',
-        value17:'',
-        value18:'',
-        value19:'',
-        value20:'',
-        value21:'',
-        value22:'15天',
-        value23:'',
-        value24:'',
-        value25:'',
-        value26:'2年',
-        value27:'',
-        value28:'',
-        value29:'',
-        value30:'',
-        value31:'',
-        value32:'',
-        value33:'',
-        value34:'15天',
-        value35:'',
-        value36:'',
-        value37:'',
-        value38:'2年',
-        value39:'',
-        value40:'',
-        value41:'',
+      form:{
+        iouIdList:[],
+        judicialStatusName:'',
+        prejudicialStatusName:'',
+        priJudicialStatusId:'',
+        caseId:'',
+        court:'',
+        chargeJudge:'',
+        layer:'',
+        entrustedLawFirm:'',
+        remarks:'',
+        statusGenerationDate:'',
       },
-      options1:[{
-        value: '丹阳法院',
-        label: '丹阳法院'
-      }, {
-        value: '京口法院',
-        label: '京口法院'
-      }, {
-        value: '润洲法院',
-        label: '润洲法院'
-      }, {
-        value: '丹徒法院',
-        label: '丹徒法院'
-      }],
-      formLabelAlign:{
-        iou:[{key:'', value: ''}]
+      rules:{
+        judicialStatusName:{required:true,message: '不允许为空',trigger:['change','blur']},
+        statusGenerationDate:{required:true,message: '不允许为空',trigger:['change','blur']},
       },
-      pickerOptions:[]
+      court_options:[
+        {value:'丹阳法院',label:'丹阳法院'},
+        {value:'京口法院',label:'京口法院'},
+        {value:'润洲法院',label:'润洲法院'},
+        {value:'丹徒法院',label:'丹徒法院'}],
+      firm_options:[
+        {value:'金矛律所',label:'金矛律所'},
+        {value:'荣誉祥律所',label:'荣誉祥律所'},
+        {value:'沪宁律所律所',label:'沪宁律所律所'},
+        {value:'君合力律所',label:'君合力律所'},
+        {value:'隆安律所',label:'隆安律所'},
+        {value:'漫修斯律所',label:'漫修斯律所'},
+        {value:'必正律所',label:'必正律所'},
+        {value:'陈志伟律所',label:'陈志伟律所'}],
+      judicalState_options:[
+        {value:'0',label:'撤诉'},
+        {value:'1',label:'起诉中'},
+        {value:'2',label:'一审审理中'},
+        {value:'3',label:'一审判决书生效'},
+        {value:'4',label:'一审调解中'},
+        {value:'5',label:'一审上诉中'},
+        {value:'6',label:'二审审理中'},
+        {value:'7',label:'二审判决书生效'},
+        {value:'8',label:'二审调解中'},
+        {value:'9',label:'二审上诉中'},
+        {value:'10',label:'再审审理中'},
+        {value:'11',label:'再审判决书生效'},
+        {value:'12',label:'再审调解中'},
+        {value:'13',label:'申请执行中'},
+        {value:'15',label:'执行中'},
+        {value:'16',label:'和解终结'},
+        {value:'17',label:'无财产终结'},
+        {value:'18',label:'申请恢复执行'},
+        ],
+      tempKey:0,
+      judicalAllIou:[],
+      query_iou:'',
+      addState:'0',
+    }
+  },
+  created() {
+    //需要的路由传参:iouList,priJudicialStatusId,prejudicialStatusName
+    let ious = JSON.parse(this.$route.query.iouIdList);
+    this.judicalAllIou = JSON.parse(this.$route.query.judicalAllIou);
+    if(ious.length>0){
+      ious.forEach((value) => {
+        let str=value.replace(/^\s+|\s+$/g,"");
+        this.form.iouIdList.push({key:this.getTempKey(),value:str});
+      })
+    }
+    this.form.priJudicialStatusId = this.$route.query.priJudicialStatusId;
+    this.form.prejudicialStatusName = '';
+    this.form.statusGenerationDate = this.$moment().format("YYYY-MM-DD");
+    this.query_iou = this.$route.query.query_iou;
+    if(this.form.priJudicialStatusId === ''){
+      this.addState = '0';  //新增最初的司法状态
+    }
+    else{
+      this.addState = '1';
+      this.form.prejudicialStatusName = this.$route.query.prejudicialStatusName;
     }
   },
   methods:{
-    reset(){
-      this.form1 = this.$options.data().form1;
-      this.formLabelAlign =this.$options.data().formLabelAlign
+    getTempKey(){
+      return this.tempKey++;
     },
-    delFirst(){
-      if(this.second==2){
-        alert("请先删除二审信息！")
-      }
-      else {
-        this.first--
-      }
-    },
-    delSecond(){
-      if(this.third==3){
-        alert("请先删除再审信息！")
-      }
-      else {
-        this.second--
-      }
-    },
-    delThird(){
-      this.third--
-    },
-    //借据对象
     addIou(){
-      this.formLabelAlign.iou.push({key:this.getTempIouId,value: ''});
+      this.form.iouIdList.push({key:this.getTempKey(),value: ''});
     },
     removeIou(iou){
-      var index = this.formLabelAlign.iou.indexOf(iou);
+      var index = this.form.iouIdList.indexOf(iou);
       if (index !== -1) {
-        this.formLabelAlign.iou.splice(index, 1);
+        this.form.iouIdList.splice(index, 1);
       }
     },
-    resetIou(){
-      this.formLabelAlign.iou=[{key:this.getTempIouId, value: ''}];
-    }
-  },
-  computed:{
-    getTempIouId(){
-      this.temp_iouId++;
-    },
-    getAddFirst(){
-      this.first++
+    // submit(){
+    //   this.$refs['form'].validate((valid) => {
+    //     if(valid){
+    //       //根据有无之前司法ID确定是更新司法状态还是新增最初的司法状态
+    //       let check_ious = [];
+    //       if(this.addState==='0'){
+    //         this.form.iouIdList.forEach((value) => {
+    //           check_ious.push(value.value);
+    //         })
+    //       }
+    //       let promiseList = [];
+    //       check_ious.forEach((value) => {
+    //         let p = new Promise((resolve,reject) => {
+    //           api({url: "/Judicial/getJudicature", method: "get", params:{iouId:value}
+    //           }).then(data => {resolve(data);})
+    //               .catch(err => {reject(err);})
+    //         });
+    //         promiseList.push(p);
+    //       })
+    //
+    //       function addJpro(isSubmit,send_data){
+    //         const p = new Promise((resolve,reject) => {
+    //           console.log(isSubmit,send_data)
+    //           if(isSubmit){
+    //             api({
+    //               url: "/Judicial/addJudicature",
+    //               method: "post",
+    //               data:send_data
+    //             }).then(data => {
+    //               resolve(data);
+    //             }).catch(err => {
+    //               reject(err);
+    //             })
+    //           }
+    //         });
+    //         return p;
+    //       }
+    //
+    //       Promise.all(promiseList).then((result) => {
+    //         console.log(result);
+    //         let ious = '';
+    //         result.forEach((value,index) => {
+    //           if(value.data.datas!== null && value.data.datas.judicialInformationList !== null && value.data.datas.judicialInformationList.length > 0){
+    //             ious+=String(check_ious[index])+'\n';
+    //           }
+    //         })
+    //         let isSubmit = true;
+    //         let send_data = {
+    //           iouIdList:this.form.iouIdList.map(item => {return item.value}),
+    //           judicialStatusName:this.form.judicialStatusName,
+    //           caseId:this.form.caseId,
+    //           court:this.form.court,
+    //           chargeJudge:this.form.chargeJudge,
+    //           layer:this.form.layer,
+    //           entrustedLawFirm:this.form.entrustedLawFirm,
+    //           remarks:this.form.remarks,
+    //           statusGenerationDate:this.form.statusGenerationDate,
+    //         };
+    //         if(this.form.priJudicialStatusId !== ''){
+    //           send_data['priJudicialStatusId'] = this.form.priJudicialStatusId;
+    //         }
+    //         if(ious!==''){
+    //           alert("借据号:\n"+ious+"已存在对应的司法信息");
+    //           isSubmit = false;
+    //         }
+    //         return addJpro(isSubmit,send_data);
+    //       }).then(res => {
+    //         console.log('add'+res);
+    //         this.$router.replace({
+    //           path:'/creditInfo/creditFinfo/xqJudicature',
+    //           query:{iou:this.query_iou}
+    //         })
+    //       }).catch((err) => {
+    //         console.log(err);
+    //       })
+    //     }
+    //     else{
+    //       this.$message("请检查提交的内容")
+    //       return false;
+    //     }
+    //   })
+    // },
+    submit(){
+      this.$refs['form'].validate((valid) => {
+        if(valid){
+          //根据有无之前司法ID确定是更新司法状态还是新增最初的司法状态
+          // function addJpro(isSubmit,send_data){
+          //   const p = new Promise((resolve,reject) => {
+          //     console.log(isSubmit,send_data)
+          //     if(isSubmit){
+          //       api({
+          //         url: "/Judicial/addJudicature",
+          //         method: "post",
+          //         data:send_data
+          //       }).then(data => {
+          //         resolve(data);
+          //       }).catch(err => {
+          //         reject(err);
+          //       })
+          //     }
+          //   });
+          //   return p;
+          // }
+          let send_data = {
+            iouIdList:this.form.iouIdList.map(item => {return item.value}),
+            judicialStatusName:this.form.judicialStatusName,
+            caseId:this.form.caseId,
+            court:this.form.court,
+            chargeJudge:this.form.chargeJudge,
+            layer:this.form.layer,
+            entrustedLawFirm:this.form.entrustedLawFirm,
+            remarks:this.form.remarks,
+            statusGenerationDate:this.form.statusGenerationDate,
+          };
+          if(this.form.priJudicialStatusId !== ''){
+            send_data['priJudicialStatusId'] = this.form.priJudicialStatusId;
+          }
+          api({
+            url: "/Judicial/addJudicature",
+            method: "post",
+            data:send_data
+          }).then(data => {
+            console.log(data);
+            if(data.data.success){
+              this.$router.replace({
+                path:'/creditInfo/creditFinfo/xqJudicature',
+                query:{iou:this.query_iou}
+              })
+            }
+            else{
+              this.$message(data.data.msg);
+            }
+          }).catch(err => {
+            console.log(err);
+          })
+
+        }
+        else{
+          this.$message('请检查提交的内容')
+        }
+      })
     }
   }
 }
@@ -600,12 +381,6 @@ export default {
   height: 50px;
   line-height: 50px;
   padding-right: 20px;
-}
-.span{
-  font-size: 25px;
-  font-weight: bold;
-  font-family: 楷体;
-  margin-left: 35%;
 }
 .span1{
   font-size: 20px;

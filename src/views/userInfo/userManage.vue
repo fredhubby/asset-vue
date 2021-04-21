@@ -1,78 +1,18 @@
 <template>
   <div>
     <el-breadcrumb separator="/">
-      <el-breadcrumb-item to="/Main"><i class="el-icon-s-home"></i></el-breadcrumb-item>
+      <el-breadcrumb-item to="/timeRemider"><i class="el-icon-s-home"></i></el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">个人信息</el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">用户管理</el-breadcrumb-item>
     </el-breadcrumb>
-    <el-row :gutter="20" class="el_row1">
+    <el-row :gutter="20">
       <el-col :span="16">
         <div class="grid-content1">
           <el-button type="primary">新增用户</el-button>
-          <el-button @click="" type="success">数据导出</el-button>
-<!--          <el-button>打印</el-button>-->
-          <el-popconfirm
-              title="确定删除用户信息吗？"
-              @confirm="">
-            <el-button slot="reference" type="danger">删除</el-button>
-          </el-popconfirm>
-
-          <el-popover
-              width="600"
-              placement="down"
-              trigger="click">
-            <el-form ref="form1" :model="form1">
-              <el-form-item>
-                <el-row :gutter="20" type="flex" class="row-bg">
-                  <el-col :span="20" :offset="1"><el-checkbox v-model="form1.account_show">账户</el-checkbox></el-col>
-                  <el-col :span="20" ><el-checkbox v-model="form1.name_show">姓名</el-checkbox></el-col>
-                  <el-col :span="20" ><el-checkbox v-model="form1.department_show">部门</el-checkbox></el-col>
-                  <el-col :span="20" ><el-checkbox v-model="form1.registerTime_show">注册时间</el-checkbox></el-col>
-                </el-row>
-                <el-row :gutter="20" type="flex" class="row-bg">
-                  <el-col :span="20" :offset="1"><el-checkbox v-model="form1.phone_show">电话</el-checkbox></el-col>
-                  <el-col :span="20" ><el-checkbox v-model="form1.mail_show">邮箱地址</el-checkbox></el-col>
-                  <el-col :span="20" ><el-checkbox v-model="form1.latestLogTime_show">最近登录时间</el-checkbox></el-col>
-                </el-row>
-              </el-form-item>
-            </el-form>
-            <el-button slot="reference" type="warning">隐藏列<i class="el-icon-caret-bottom"></i></el-button>
-          </el-popover>
-
-          <el-popover
-              placement="down"
-
-              trigger="click">
-            <el-form ref="form1" :model="form1">
-              <el-row :gutter="20" type="flex" class="row-bg">
-                <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.department_checked">部门</el-checkbox></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.department" clearable :disabled="Boolean(!form1.department_checked)"></el-input></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.registerTime_checked">注册时间</el-checkbox></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="30">
-                    <el-date-picker
-                        v-model="form1.registerTime"
-                        type="daterange"
-                        :disabled="Boolean(!form1.registerTime_checked)"
-                        range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期">
-                    </el-date-picker>
-                  </el-col>
-                </el-form-item>
-              </el-row>
-
-              <el-button @click="reset('form1')">清空</el-button>
-              <el-button type="primary" @click="submit">筛选</el-button>
-            </el-form>
-            <el-button slot="reference" type="success">筛选<i class="el-icon-caret-bottom"></i></el-button>
-          </el-popover>
+          <el-button>数据导出</el-button>
+          <el-button>打印</el-button>
+          <el-button>删除</el-button>
+          <el-button>隐藏列</el-button>
         </div>
       </el-col>
       <el-col :span="8">
@@ -92,13 +32,17 @@
         <el-table :data="tableData" border height="500" style="width: 100%" class="el-table"
                   ref="filterTable" @selection-change="handleSelectionChange" >
           <el-table-column type="selection" width="50"></el-table-column>
-          <el-table-column prop="account" label="账户" width="150" v-if="!form1.account_show"></el-table-column>
-          <el-table-column prop="name" label="姓名" width="150" v-if="!form1.name_show"></el-table-column>
-          <el-table-column prop="department" label="部门" width="150" v-if="!form1.department_show"></el-table-column>
-          <el-table-column prop="registerTime" sortable label="注册时间" width="200" v-if="!form1.registerTime_show"></el-table-column>
-          <el-table-column prop="phone" label="电话" width="200" v-if="!form1.phone_show"></el-table-column>
-          <el-table-column prop="mail" label="邮箱地址" width="300" v-if="!form1.mail_show"></el-table-column>
-          <el-table-column prop="latestLogTime" sortable label="最近登录时间" width="250" v-if="!form1.latestLogTime_show"></el-table-column>
+          <el-table-column prop="zh" label="账户" width="150"></el-table-column>
+          <el-table-column prop="xm" label="姓名" width="150"></el-table-column>
+          <el-table-column prop="bm" label="部门" width="150"></el-table-column>
+          <el-table-column prop="zcsj" sortable label="注册时间" width="200"
+                           :filters="[{text: '2016-05-01', value: '2016-05-01'}, {text: '2016-05-02', value: '2016-05-02'},
+                           {text: '2016-05-03', value: '2016-05-03'}, {text: '2016-05-04', value: '2016-05-04'}]"
+                           :filter-method="filterHandler">
+          </el-table-column>
+          <el-table-column prop="dh" label="电话" width="200"></el-table-column>
+          <el-table-column prop="yxdz" label="邮箱地址" width="300"></el-table-column>
+          <el-table-column prop="zjdlsj" sortable label="最近登录时间" width="250"></el-table-column>
           <el-table-column prop="operate" label="操作">
             详情
           </el-table-column>
@@ -125,31 +69,18 @@ export default {
     return{
       input1:'',
       currentPage: 1,
-      form1:{
-        department_checked: false,
-        department: '',
-        registerTime_checked: false,
-        registerTime: '',
-        account_show:false,
-        name_show:false,
-        department_show:false,
-        registerTime_show:false,
-        phone_show:false,
-        mail_show:false,
-        latestLogTime_show:false,
-
-      },
-      pickerOptions:[],
-      tableData: []
+      tableData: [{
+        zjdlsj:'',
+        yxdz:'',
+        dh:'',
+        zcsj:'',
+        bm:'',
+        xm:'',
+        zh:''
+      }]
     }
   },
   methods:{
-    reset(){
-      this.form1 = this.$options.data().form1
-    },
-    submit(){
-      alert("submit")
-    },
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
@@ -187,7 +118,7 @@ export default {
   font-size: 15px;
   margin-top: 10px;
 }
-.el_row1{
+.el-row{
   margin-top: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
   border-radius: 4px;

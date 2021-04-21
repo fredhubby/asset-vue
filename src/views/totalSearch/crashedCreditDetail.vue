@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-breadcrumb separator="/">
-      <el-breadcrumb-item to="/Main"><i class="el-icon-s-home"></i></el-breadcrumb-item>
+      <el-breadcrumb-item to="/timeRemider"><i class="el-icon-s-home"></i></el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">查询统计</el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">破产债权</el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">详情</el-breadcrumb-item>
@@ -10,7 +10,7 @@
     <el-row class="el-row1">
       <el-col :span="24">
         <div class="grid-content">
-          <el-button @click="addCrashedCredit">新增破产债权</el-button>
+<!--          <el-button @click="addCrashedCredit">新增破产债权</el-button>-->
           <el-button @click="edit">{{edit_label}}</el-button>
           <el-popconfirm
               title="确定提交？"
@@ -31,12 +31,15 @@
           <el-col :span="3"><div class="grid-content1" style="margin-left: 20px">破产受理日：</div></el-col>
           <el-col :span="7"><div class="grid-content2" style="text-align: start">
             <el-date-picker
-                v-model="form1.bankruptcyAcceptanceDate"
                 :disabled="!allow_edit"
-                align="right"
+                v-model="form1.bankruptcyAcceptanceDate"
                 type="date"
                 placeholder="选择日期"
-                :picker-options="pickerOptions">
+                style="width: 100%"
+                align="right"
+                format="yyyy-MM-dd"
+                :picker-options="pickerOptions"
+                value-format="yyyy-MM-dd">
             </el-date-picker>
           </div></el-col>
         </el-row>

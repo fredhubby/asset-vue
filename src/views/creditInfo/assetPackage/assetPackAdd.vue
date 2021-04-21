@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-breadcrumb separator="/">
-      <el-breadcrumb-item to="/Main"><i class="el-icon-s-home"></i></el-breadcrumb-item>
+      <el-breadcrumb-item to="/timeRemider"><i class="el-icon-s-home"></i></el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">债权信息</el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1" to="/creditInfo/assetPackage/assetPackMenu">资产包</el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">资产包录入</el-breadcrumb-item>
@@ -20,11 +20,11 @@
       </el-col>
     </el-row>
 
-      <el-form :label-position="labelPosition" :model="formLabelAlign" label-width="150px" style="margin-top: 20px">
-        <el-form-item label="资产包ID">
-          <el-input clearable v-model="formLabelAlign.id" style="width: 40%"></el-input>
-        </el-form-item>
-        <el-form-item label="资产包债权人">
+      <el-form :label-position="labelPosition" :model="formLabelAlign" ref="formLabelAlign" :rules="rules" label-width="150px" style="margin-top: 20px">
+<!--        <el-form-item label="资产包ID">-->
+<!--          <el-input clearable v-model="formLabelAlign.id" style="width: 40%"></el-input>-->
+<!--        </el-form-item>-->
+        <el-form-item label="资产包债权人" prop="creditor">
           <el-select v-model="formLabelAlign.creditor" clearable filterable placeholder="请选择">
             <el-option
                 v-for="item in options"
@@ -34,7 +34,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="资产包原债权人">
+        <el-form-item label="资产包原债权人" prop="originalCreditor">
           <el-select v-model="formLabelAlign.originalCreditor" clearable filterable placeholder="请选择">
             <el-option
                 v-for="item in options1"
@@ -44,12 +44,12 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="债权总成本">
-          <el-input clearable v-model="formLabelAlign.costDebtTotal" style="width: 40%"></el-input>
-        </el-form-item>
-        <el-form-item label="回收款合计">
-          <el-input clearable v-model="formLabelAlign.recycleTotal" style="width: 40%"></el-input>
-        </el-form-item>
+<!--        <el-form-item label="债权总成本">-->
+<!--          <el-input clearable v-model="formLabelAlign.costDebtTotal" style="width: 40%"></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="回收款合计">-->
+<!--          <el-input clearable v-model="formLabelAlign.recycleTotal" style="width: 40%"></el-input>-->
+<!--        </el-form-item>-->
         <el-form-item label="备注">
           <el-input clearable v-model="formLabelAlign.remarks" style="width: 40%" type="textarea" autosize></el-input>
         </el-form-item>
@@ -79,6 +79,8 @@
                       v-model="inform.date"
                       type="date"
                       placeholder="选择日期"
+                      format="yyyy-MM-dd"
+                      value-format="yyyy-MM-dd"
                       style="width: 70%">
                   </el-date-picker>
                 </el-form-item>
@@ -114,6 +116,10 @@ export default {
         recycleTotal:'',
         remarks:''
       },
+      rules:{
+        creditor:{required:true,message:'不允许为空',trigger:['change','blur']},
+        originalCreditor:{required:true,message:'不允许为空',trigger:['change','blur']},
+      },
       formInline: {
         inform:[{key:'', method:'', date:''}]
       },
@@ -144,30 +150,39 @@ export default {
       this.formInline = this.$options.data().formInline
     },
     submit(){
-      var _this = this;
-      let informList = []
-      for(let i=0;i<this.formInline.inform.length;i++){
-        informList.push({assetPackageId:this.formLabelAlign.id,urgingType:this.formInline.inform[i].method,
-          urgingNoticeDate:this.formInline.inform[i].date,deleteFlag:0});
-      }
-
-      api({
-        url: "assetPackage/addAssetPackage",
-        method: "post",
-        data:{
-          id:_this.formLabelAlign.id,
-          creditor: _this.formLabelAlign.creditor,
-          originalCreditor:_this.formLabelAlign.originalCreditor,
-          costDebtTotal:_this.formLabelAlign.costDebtTotal,
-          recycleTotal:_this.formLabelAlign.recycleTotal,
-          remarks: _this.formLabelAlign.remarks,
-          urgingNoticeDaoList: informList
+      this.$refs['formLabelAlign'].validate((valid) => {
+        if(valid) {
+          var _this = this;
+          let informList = []
+          for (let i = 0; i < this.formInline.inform.length; i++) {
+            informList.push({
+              assetPackageId: this.formLabelAlign.id, urgingType: this.formInline.inform[i].method,
+              urgingNoticeDate: this.formInline.inform[i].date, deleteFlag: 0
+            });
+          }
+          // console.log(informList)
+          api({
+            url: "assetPackage/addAssetPackage",
+            method: "post",
+            data:{
+              id:_this.formLabelAlign.id,
+              creditor: _this.formLabelAlign.creditor,
+              originalCreditor:_this.formLabelAlign.originalCreditor,
+              costDebtTotal:_this.formLabelAlign.costDebtTotal,
+              recycleTotal:_this.formLabelAlign.recycleTotal,
+              remarks: _this.formLabelAlign.remarks,
+              urgingNoticeDaoList: informList
+            }
+          }).then(data => {
+            console.log(data);
+            this.$router.replace('/creditInfo/assetPackage/assetPackMenu');
+          }).catch(err => {
+            console.log(err);
+          })
         }
-      }).then(data => {
-        console.log(data);
-        this.$router.replace('/creditInfo/assetPackage/assetPackMenu');
-      }).catch(err => {
-        console.log(err);
+        else{
+          this.$message('请检查提交内容')
+        }
       })
     },
     //催收公告

@@ -8,22 +8,22 @@ import Register from '@/views/Register'
 import creditMenu from "@/views/creditInfo/creditFinfo/creditMenu";
 import assetPackMenu from "@/views/creditInfo/assetPackage/assetPackMenu";
 import assetPackInfo from "@/views/creditInfo/assetPackage/assetPackInfo";
-import recallDetail from "@/views/creditRecall/recallDetail";
+// import recallDetail from "@/views/creditRecall/recallDetail";
 import JudicialDetail from "@/views/JudicialProceedings/JudicialDetail";
 import userInfo from "@/views/userInfo/userInfo";
 import userManage from "@/views/userInfo/userManage";
-import collectionManage from "@/views/totalSearch/collectionManage";
+// import collectionManage from "@/views/totalSearch/collectionManage";
 import fqCompany from "@/views/totalSearch/fqCompany";
 import SMAD from "@/views/totalSearch/SMAD";
 import crashedCredit from "@/views/totalSearch/crashedCredit";
-import creditTransfer from "@/views/totalSearch/creditTransfer";
+// import creditTransfer from "@/views/totalSearch/creditTransfer";
 import addfqCompanyInfo from "@/views/totalSearch/addfqCompanyInfo";
 import addCrashedCreditInfo from "@/views/totalSearch/addCrashedCreditInfo";
-import addCreditTransferInfo from "@/views/totalSearch/addCreditTransferInfo";
-import recallXq from "@/views/creditRecall/recallXq";
+// import addCreditTransferInfo from "@/views/totalSearch/addCreditTransferInfo";
+// import recallXq from "@/views/creditRecall/recallXq";
 import JudicialInfo from "@/views/JudicialProceedings/JudicialInfo";
 import assetPackAdd from "@/views/creditInfo/assetPackage/assetPackAdd";
-import addCollection from "@/views/totalSearch/addCollection";
+// import addCollection from "@/views/totalSearch/addCollection";
 import xqCollection from "@/views/creditInfo/creditFinfo/xqCollection";
 import xqJudicature from "@/views/creditInfo/creditFinfo/xqJudicature";
 import xqRecall from "@/views/creditInfo/creditFinfo/xqRecall";
@@ -34,16 +34,19 @@ import FInfo from "@/views/creditInfo/FInfo";
 import xqSmortgage from "@/views/creditInfo/creditFinfo/xqSmortgage";
 import xqCreditFinfo from "@/views/creditInfo/creditFinfo/xqCreditFinfo";
 import SMADxq from "@/views/totalSearch/SMADXQ/SMADxq";
-import SMADFinfo from "@/views/totalSearch/SMADXQ/SMADFinfo";
-import SMADauction from "@/views/totalSearch/SMADXQ/SMADauction";
-import SMADinfo from "@/views/totalSearch/SMADXQ/SMADinfo";
+// import SMADFinfo from "@/views/totalSearch/SMADXQ/SMADFinfo";
+// import SMADauction from "@/views/totalSearch/SMADXQ/SMADauction";
+// import SMADinfo from "@/views/totalSearch/SMADXQ/SMADinfo";
+import addSMAD from "@/views/totalSearch/addSMAD";
+import fqCompanyxq from "@/views/totalSearch/fqCompanyxq";
 import crashedCreditDetail from "@/views/totalSearch/crashedCreditDetail";
+import timeRemider from "@/views/timeRemider";
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
+    path: '/Login',
     name: 'Login',
     component: Login
   },
@@ -53,6 +56,11 @@ const routes = [
     component: Main,
     // 嵌套路由
     children: [
+      {
+        path: '/timeRemider',
+        name: 'timeRemider',
+        component: timeRemider
+      },
       {
         path: '/creditInfo/creditFinfo/creditMenu',
         name: 'creditMenu',
@@ -118,16 +126,16 @@ const routes = [
         name: 'xqCreditFinfo',
         component: xqCreditFinfo
       },
-      {
-        path: '/creditRecall/recallDetail',
-        name: 'recallDetail',
-        component: recallDetail
-      },
-      {
-        path: '/creditRecall/recallXq',
-        name: 'recallXq',
-        component: recallXq
-      },
+      // {
+      //   path: '/creditRecall/recallDetail',
+      //   name: 'recallDetail',
+      //   component: recallDetail
+      // },
+      // {
+      //   path: '/creditRecall/recallXq',
+      //   name: 'recallXq',
+      //   component: recallXq
+      // },
       {
         path: '/JudicialProceedings/JudicialDetail',
         name: 'JudicialDetail',
@@ -148,20 +156,25 @@ const routes = [
         name: 'userManage',
         component: userManage
       },
-      {
-        path: '/totalSearch/collectionManage',
-        name: 'collectionManage',
-        component: collectionManage
-      },
-      {
-        path: '/totalSearch/addCollection',
-        name: 'addCollection',
-        component: addCollection
-      },
+      // {
+      //   path: '/totalSearch/collectionManage',
+      //   name: 'collectionManage',
+      //   component: collectionManage
+      // },
+      // {
+      //   path: '/totalSearch/addCollection',
+      //   name: 'addCollection',
+      //   component: addCollection
+      // },
       {
         path: '/totalSearch/fqCompany',
         name: 'fqCompany',
         component: fqCompany
+      },
+      {
+        path: '/totalSearch/fqCompanyxq',
+        name: 'fqCompanyxq',
+        component: fqCompanyxq
       },
       {
         path: '/totalSearch/addfqCompanyInfo',
@@ -189,35 +202,40 @@ const routes = [
         component: SMAD
       },
       {
+        path: '/totalSearch/addSMAD',
+        name: 'addSMAD',
+        component: addSMAD
+      },
+      {
         path: '/totalSearch/SMADXQ/SMADxq',
         name: 'SMADxq',
         component: SMADxq
       },
-      {
-        path: '/totalSearch/SMADXQ/SMADFinfo',
-        name: 'SMADFinfo',
-        component: SMADFinfo
-      },
-      {
-        path: '/totalSearch/SMADXQ/SMADauction',
-        name: 'SMADauction',
-        component: SMADauction
-      },
-      {
-        path: '/totalSearch/SMADXQ/SMADinfo',
-        name: 'SMADinfo',
-        component: SMADinfo
-      },
-      {
-        path: '/totalSearch/creditTransfer',
-        name: 'creditTransfer',
-        component: creditTransfer
-      },
-      {
-        path: '/totalSearch/addCreditTransferInfo',
-        name: 'addCreditTransferInfo',
-        component: addCreditTransferInfo
-      }
+      // {
+      //   path: '/totalSearch/SMADXQ/SMADFinfo',
+      //   name: 'SMADFinfo',
+      //   component: SMADFinfo
+      // },
+      // {
+      //   path: '/totalSearch/SMADXQ/SMADauction',
+      //   name: 'SMADauction',
+      //   component: SMADauction
+      // },
+      // {
+      //   path: '/totalSearch/SMADXQ/SMADinfo',
+      //   name: 'SMADinfo',
+      //   component: SMADinfo
+      // },
+      // {
+      //   path: '/totalSearch/creditTransfer',
+      //   name: 'creditTransfer',
+      //   component: creditTransfer
+      // },
+      // {
+      //   path: '/totalSearch/addCreditTransferInfo',
+      //   name: 'addCreditTransferInfo',
+      //   component: addCreditTransferInfo
+      // }
     ]
   },
   {

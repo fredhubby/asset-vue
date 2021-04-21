@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-breadcrumb separator="/">
-      <el-breadcrumb-item to="/Main"><i class="el-icon-s-home"></i></el-breadcrumb-item>
+      <el-breadcrumb-item to="/timeRemider"><i class="el-icon-s-home"></i></el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">查询统计</el-breadcrumb-item>
       <el-breadcrumb-item class="el-breadcrumb1">破产债权</el-breadcrumb-item>
     </el-breadcrumb>
@@ -17,128 +17,82 @@
             <el-button slot="reference" type="danger">删除</el-button>
           </el-popconfirm>
 
-          <el-popover
-              width="600"
-              placement="down"
-              trigger="click">
-            <el-form ref="form1" :model="form1">
-              <el-form-item>
-                <el-row :gutter="20" type="flex" class="row-bg">
-                  <el-col :span="20" :offset="1"><el-checkbox v-model="form1.id_show">破产企业id</el-checkbox></el-col>
-                  <el-col :span="20" ><el-checkbox v-model="form1.bustEnterprise_show">破产企业</el-checkbox></el-col>
-                  <el-col :span="20" ><el-checkbox v-model="form1.bankruptcyAcceptanceDate_show">破产受理日</el-checkbox></el-col>
-                  <el-col :span="20" ><el-checkbox v-model="form1.bankruptcyAdministrator_show">破产管理人</el-checkbox></el-col>
-                </el-row>
-                <el-row :gutter="20" type="flex" class="row-bg">
-                  <el-col :span="20" :offset="1"><el-checkbox v-model="form1.claimsDeclarant_show">债权申报人</el-checkbox></el-col>
-                  <el-col :span="20" ><el-checkbox v-model="form1.claimsProperties_show">债权性质</el-checkbox></el-col>
-                  <el-col :span="20" ><el-checkbox v-model="form1.declaredAmount_show">申报金额</el-checkbox></el-col>
-                  <el-col :span="20" ><el-checkbox v-model="form1.deductionAmount_show">核减金额</el-checkbox></el-col>
-                </el-row>
-                <el-row :gutter="20" type="flex" class="row-bg">
-                  <el-col :span="20" :offset="1"><el-checkbox v-model="form1.recognizedAmount_show">认定金额</el-checkbox></el-col>
-                  <el-col :span="20" ><el-checkbox v-model="form1.allocationAmount_show">分配金额</el-checkbox></el-col>
-                  <el-col :span="20" ><el-checkbox v-model="form1.contacts_show">联系人</el-checkbox></el-col>
-                  <el-col :span="20" ><el-checkbox v-model="form1.contactNumber_show">联系人电话</el-checkbox></el-col>
-                </el-row>
-                <el-row :gutter="20" type="flex" class="row-bg">
-                  <el-col :span="20" :offset="1"><el-checkbox v-model="form1.remarks_show">备注</el-checkbox></el-col>
-                </el-row>
-              </el-form-item>
-            </el-form>
-            <el-button slot="reference" type="warning">隐藏列<i class="el-icon-caret-bottom"></i></el-button>
-          </el-popover>
+<!--          <el-popover-->
+<!--              width="600"-->
+<!--              placement="down"-->
+<!--              trigger="click">-->
+<!--            <el-form ref="form1" :model="form1">-->
+<!--              <el-form-item>-->
+<!--                <el-row :gutter="20" type="flex" class="row-bg">-->
+<!--                  <el-col :span="20" :offset="1"><el-checkbox v-model="form1.id_show">破产企业id</el-checkbox></el-col>-->
+<!--                  <el-col :span="20" ><el-checkbox v-model="form1.bustEnterprise_show">破产企业</el-checkbox></el-col>-->
+<!--                  <el-col :span="20" ><el-checkbox v-model="form1.bankruptcyAcceptanceDate_show">破产受理日</el-checkbox></el-col>-->
+<!--                  <el-col :span="20" ><el-checkbox v-model="form1.bankruptcyAdministrator_show">破产管理人</el-checkbox></el-col>-->
+<!--                </el-row>-->
+<!--                <el-row :gutter="20" type="flex" class="row-bg">-->
+<!--                  <el-col :span="20" :offset="1"><el-checkbox v-model="form1.claimsDeclarant_show">债权申报人</el-checkbox></el-col>-->
+<!--                  <el-col :span="20" ><el-checkbox v-model="form1.claimsProperties_show">债权性质</el-checkbox></el-col>-->
+<!--                  <el-col :span="20" ><el-checkbox v-model="form1.declaredAmount_show">申报金额</el-checkbox></el-col>-->
+<!--                  <el-col :span="20" ><el-checkbox v-model="form1.deductionAmount_show">核减金额</el-checkbox></el-col>-->
+<!--                </el-row>-->
+<!--                <el-row :gutter="20" type="flex" class="row-bg">-->
+<!--                  <el-col :span="20" :offset="1"><el-checkbox v-model="form1.recognizedAmount_show">认定金额</el-checkbox></el-col>-->
+<!--                  <el-col :span="20" ><el-checkbox v-model="form1.allocationAmount_show">分配金额</el-checkbox></el-col>-->
+<!--                  <el-col :span="20" ><el-checkbox v-model="form1.contacts_show">联系人</el-checkbox></el-col>-->
+<!--                  <el-col :span="20" ><el-checkbox v-model="form1.contactNumber_show">联系人电话</el-checkbox></el-col>-->
+<!--                </el-row>-->
+<!--                <el-row :gutter="20" type="flex" class="row-bg">-->
+<!--                  <el-col :span="20" :offset="1"><el-checkbox v-model="form1.remarks_show">备注</el-checkbox></el-col>-->
+<!--                </el-row>-->
+<!--              </el-form-item>-->
+<!--            </el-form>-->
+<!--            <el-button slot="reference" type="warning">隐藏列<i class="el-icon-caret-bottom"></i></el-button>-->
+<!--          </el-popover>-->
 
           <el-popover
               placement="down"
               trigger="click">
-            <el-form ref="form1" :model="form1">
-              <el-row :gutter="20" type="flex" class="row-bg">
-                <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.bustEnterprise_checked">破产企业</el-checkbox></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.bustEnterprise" clearable :disabled="Boolean(!form1.bustEnterprise_checked)"></el-input></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.bankruptcyAcceptanceDate_checked">破产受理日</el-checkbox></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="30">
-                    <el-date-picker
-                        v-model="form1.bankruptcyAcceptanceDate"
-                        type="daterange"
-                        :disabled="Boolean(!form1.bankruptcyAcceptanceDate_checked)"
-                        range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期">
-                    </el-date-picker>
-                  </el-col>
-                </el-form-item>
+            <el-form ref="form1" :model="search_form">
+              <el-row :gutter="30" type="flex" class="row_bg">
+                <el-col :span="7">
+                  <el-form-item label="破产企业:" label-width="75px"><el-input v-model="search_form.bustEnterprise" clearable></el-input></el-form-item>
+                </el-col>
+                <el-col :span="7">
+                  <el-form-item label="破产受理日:" label-width="90px">
+                    <el-date-picker v-model="search_form.bankruptcyAcceptanceDate" type="date" placeholder="选择日期" style="width: 100%" format="yyyy-MM-dd" value-format="yyyy-MM-dd"></el-date-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="7">
+                  <el-form-item label="破产管理人:" label-width="90px"><el-input v-model="search_form.bankruptcyAdministrator" clearable></el-input></el-form-item>
+                </el-col>
               </el-row>
-              <el-row :gutter="20" type="flex" class="row-bg">
-                <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.bankruptcyAdministrator_checked">破产管理人</el-checkbox></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.bankruptcyAdministrator" clearable :disabled="Boolean(!form1.bankruptcyAdministrator_checked)"></el-input></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.claimsDeclarant_checked">债权申报人</el-checkbox></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.claimsDeclarant" clearable :disabled="Boolean(!form1.claimsDeclarant_checked)"></el-input></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.claimsProperties_checked">债权性质</el-checkbox></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.claimsProperties" clearable :disabled="Boolean(!form1.claimsProperties_checked)"></el-input></el-col>
-                </el-form-item>
+              <el-row :gutter="30" type="flex" class="row_bg">
+                <el-col :span="7">
+                  <el-form-item label="债权申报人:" label-width="90px">
+                    <el-input v-model="search_form.claimsDeclarant" clearable></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="7">
+                  <el-form-item label="债权性质:" label-width="75px">
+                    <el-input v-model="search_form.claimsProperties" clearable></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="7">
+                  <el-form-item label="联系人:" label-width="75px">
+                    <el-input v-model="search_form.contacts" clearable></el-input>
+                  </el-form-item>
+                </el-col>
               </el-row>
-              <el-row :gutter="20" type="flex" class="row-bg">
-                <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.declaredAmount_checked">申报金额</el-checkbox></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.declaredAmount" clearable :disabled="Boolean(!form1.declaredAmount_checked)"></el-input></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.deductionAmount_checked">核减金额</el-checkbox></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.deductionAmount" clearable :disabled="Boolean(!form1.deductionAmount_checked)"></el-input></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.recognizedAmount_checked">认定金额</el-checkbox></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.recognizedAmount" clearable :disabled="Boolean(!form1.recognizedAmount_checked)"></el-input></el-col>
-                </el-form-item>
-              </el-row>
-              <el-row :gutter="20" type="flex" class="row-bg">
-                <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.allocationAmount_checked">分配金额</el-checkbox></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.allocationAmount" clearable :disabled="Boolean(!form1.allocationAmount_checked)"></el-input></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.contacts_checked">联系人</el-checkbox></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.contacts" clearable :disabled="Boolean(!form1.contacts_checked)"></el-input></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="2"><el-checkbox v-model="form1.contactNumber_checked">联系人电话</el-checkbox></el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-col :span="30"><el-input v-model="form1.contactNumber" clearable :disabled="Boolean(!form1.contactNumber_checked)"></el-input></el-col>
-                </el-form-item>
+              <el-row :gutter="30" type="flex" class="row_bg">
+                <el-col :span="7">
+                  <el-form-item label="联系人电话:" label-width="90px">
+                    <el-input v-model="search_form.contactNumber" clearable></el-input>
+                  </el-form-item>
+                </el-col>
               </el-row>
 
-              <el-button @click="reset('form1')">清空</el-button>
-              <el-button type="primary" @click="submit">筛选</el-button>
+              <el-button @click="filterReset">清空</el-button>
+              <el-button type="primary" @click="filterSearch">筛选</el-button>
             </el-form>
             <el-button slot="reference" type="success">筛选<i class="el-icon-caret-bottom"></i></el-button>
           </el-popover>
@@ -146,9 +100,9 @@
       </el-col>
       <el-col :span="8">
         <div class="grid-content2" style="margin-top: 5px">
-          <el-input placeholder="支持条件模糊搜索" v-model="input1">
-            <el-button slot="append" icon="el-icon-search"></el-button>
-          </el-input>
+<!--          <el-input placeholder="支持条件模糊搜索" v-model="input1">-->
+<!--            <el-button slot="append" icon="el-icon-search"></el-button>-->
+<!--          </el-input>-->
         </div>
       </el-col>
     </el-row>
@@ -158,7 +112,7 @@
         <span>破产债权记录</span>
       </div>
       <div  class="text item">
-        <el-table :data="tableData" border height="500" style="width: 100%" class="el-table"
+        <el-table :data="tableData" border :height="tableHeight" style="width: 100%" class="el-table"
                   ref="filterTable" @selection-change="handleSelectionChange" >
           <el-table-column type="selection" width="50"></el-table-column>
           <el-table-column prop="id" label="破产企业id" width="280" v-if="!form1.id_show"></el-table-column>
@@ -186,9 +140,9 @@
                        @current-change="handleCurrentChange"
                        :current-page="currentPage"
                        :page-sizes="[10, 20, 30, 40, 50]"
-                       :page-size="10"
+                       :page-size="pagesize"
                        layout="total, sizes, prev, pager, next, jumper"
-                       :total="400">
+                       :total="totalsize">
         </el-pagination>
       </div>
     </el-card>
@@ -204,19 +158,6 @@ export default {
     return{
       input1:'',
       form1:{
-        id_checked:false,
-        bustEnterprise_checked:false,
-        bankruptcyAcceptanceDate_checked:false,
-        bankruptcyAdministrator_checked:false,
-        claimsDeclarant_checked:false,
-        claimsProperties_checked:false,
-        declaredAmount_checked:false,
-        deductionAmount_checked:false,
-        recognizedAmount_checked:false,
-        allocationAmount_checked:false,
-        contacts_checked:false,
-        contactNumber_checked:false,
-        remarks_checked:false,
         id:'',
         claimsDeclarant:'',
         bustEnterprise:'',
@@ -244,18 +185,31 @@ export default {
         contactNumber_show:false,
         remarks_show:false
       },
+      search_form:{claimsDeclarant:'', bustEnterprise:'', bankruptcyAcceptanceDate:'', bankruptcyAdministrator:'', claimsProperties:'', contacts:'', contactNumber:'',},
+      filter_flag:false,
       pickerOptions:[],
       tableData: [],
       multipleSelection:[],
       currentPage: 1,
       pagesize:10,
       totalsize:10,
+      tableHeight:window.innerHeight - 420,
     }
   },
   created() {
     this.pagesize=10;
     this.currentPage=1;
     this.getCrashedCreditList();
+  },
+  mounted () {
+    window.onresize = () => {
+      return (() => {
+        this.tableHeight = window.innerHeight - 420
+      })()
+    }
+  },
+  activated () {
+    this.tableHeight = window.innerHeight - 420
   },
   methods:{
     reset(){
@@ -265,7 +219,11 @@ export default {
       alert("submit")
     },
     addCrashedCredit(){
-      this.$router.replace('/totalSearch/addCrashedCreditInfo')
+      let newpage = this.$router.resolve({
+        path: '/totalSearch/addCrashedCreditInfo',
+      })
+      window.open(newpage.href, '_blank');
+      // this.$router.replace('/totalSearch/addCrashedCreditInfo')
     },
     getCrashedCreditList(){
       var _this = this;
@@ -323,12 +281,78 @@ export default {
     },
     handleSizeChange(val) {
       this.pagesize=val;
-      this.getCrashedCreditList();
+      if(this.filter_flag){
+        let send_data = JSON.parse(JSON.stringify(this.search_form));
+        send_data.size = this.pagesize;
+        send_data.current = this.currentPage;
+        api({
+          url: "CrashedCredit/searchCrashedCreditList",
+          method: "post",
+          data:send_data
+        }).then(data => {
+          console.log(data)
+          this.tableData = data.data.datas.records;
+          this.totalsize = data.data.datas.total;
+          this.filter_flag = true;
+        }).catch(err => {
+          console.log(err)
+        })
+      }
+      else{
+        this.getCrashedCreditList();
+      }
     },
     handleCurrentChange(val) {
       this.currentPage=val;
-      this.getCrashedCreditList();
-    }
+      if(this.filter_flag){
+        let send_data = JSON.parse(JSON.stringify(this.search_form));
+        send_data.size = this.pagesize;
+        send_data.current = this.currentPage;
+        api({
+          url: "CrashedCredit/searchCrashedCreditList",
+          method: "post",
+          data:send_data
+        }).then(data => {
+          console.log(data)
+          this.tableData = data.data.datas.records;
+          this.totalsize = data.data.datas.total;
+          this.filter_flag = true;
+        }).catch(err => {
+          console.log(err)
+        })
+      }
+      else{
+        this.getCrashedCreditList();
+      }
+    },
+    filterReset(){
+      this.search_form={claimsDeclarant:'', bustEnterprise:'', bankruptcyAcceptanceDate:'', bankruptcyAdministrator:'', claimsProperties:'', contacts:'', contactNumber:'',};
+      if(this.filter_flag){
+        this.pagesize =10;
+        this.currentPage=1;
+        this.getCrashedCreditList();
+        this.filter_flag = false;
+      }
+    },
+    filterSearch(){
+      let send_data = JSON.parse(JSON.stringify(this.search_form));
+      this.pagesize =10;
+      this.currentPage=1;
+      send_data.size = this.pagesize;
+      send_data.current = this.currentPage;
+      api({
+        url: "CrashedCredit/searchCrashedCreditList",
+        method: "post",
+        data:send_data
+      }).then(data => {
+        console.log(data)
+        this.tableData = data.data.datas.records;
+        this.totalsize = data.data.datas.total;
+        this.filter_flag = true;
+      }).catch(err => {
+        console.log(err)
+      })
+    },
   },
   computed:{
     multipleSelection_crash:function (){
